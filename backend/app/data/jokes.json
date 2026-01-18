@@ -1,0 +1,20 @@
+[
+  {
+    "type": "joke",
+    "category": "dinosaur",
+    "question": "Why can’t you hear a pterodactyl go to the bathroom? 🦖😂",
+    "answer": "Because the P is silent!"
+  },
+  {
+    "type": "joke",
+    "category": "animal",
+    "question": "What do you call a sleeping dinosaur? 😴🦖",
+    "answer": "A dino-snore!"
+  },
+  {
+    "type": "riddle",
+    "category": "easy",
+    "question": "What has hands but can’t clap? ⏰🤔",
+    "answer": "A clock!"
+  }
+]
