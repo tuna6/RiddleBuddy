@@ -3,12 +3,23 @@ from app.jokes import get_joke
 from app.deepseek_client import generate_joke
 import json
 import requests
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(
     title="Joke & Riddle Buddy",
     description="Safe jokes and riddles for kids",
     version="0.1.0"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.mount("/static", StaticFiles(directory="app/frontend", html=True), name="frontend")
 
 @app.get("/health")
 def health():
