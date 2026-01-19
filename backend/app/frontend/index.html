@@ -7,10 +7,23 @@
 <body>
   <h1>🦖 Joke Buddy</h1>
 
-  <button id="jokeBtn">Tell me a joke!</button>
+  <select id="category">
+    <option value="random">Random</option>
+    <option value="dinosaur">🦖 Dinosaur</option>
+    <option value="dad">😂 Dad</option>
+    <option value="animal">🐶 Animal</option>
+  </select>
 
-  <pre id="output"></pre>
+  <select id="type">
+    <option value="joke">Joke</option>
+    <option value="riddle">Riddle</option>
+  </select>
+  <br>
 
-  <script src="app.js"></script>
+  <button onclick="getJoke()">Tell me one!</button>
+
+  <h2 id="question"></h2>
+  <h3 id="answer"></h3>
+  <script src="/static/app.js"></script>
 </body>
 </html>

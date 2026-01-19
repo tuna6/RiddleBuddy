@@ -1,16 +1,22 @@
-document.getElementById("jokeBtn").onclick = async () => {
-  const output = document.getElementById("output");
-  output.textContent = "Thinking... 🤔";
+async function getJoke() {
+  const category = document.getElementById("category").value;
+  const type = document.getElementById("type").value;
+
+  const questionEl = document.getElementById("question");
+  const answerEl = document.getElementById("answer");
+
+  // ⏳ loading state
+  questionEl.textContent = "Thinking... 🤔";
+  answerEl.textContent = "";
 
   try {
-    const res = await fetch("/joke");
+    const res = await fetch(`/joke?category=${category}&type=${type}`);
     const data = await res.json();
 
-    if (data.question && data.answer) {
-      output.textContent = `${data.question}\n\n${data.answer}`;
-    } else {      output.textContent = "No joke 😅";
-    }
+    questionEl.textContent = data.question;
+    answerEl.textContent = data.answer;
   } catch {
-    output.textContent = "Oops 😵";
+    questionEl.textContent = "Oops!";
+    answerEl.textContent = "";
   }
-};
+}
