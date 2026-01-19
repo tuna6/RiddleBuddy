@@ -3,13 +3,12 @@ document.getElementById("jokeBtn").onclick = async () => {
   output.textContent = "Thinking... 🤔";
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/joke");
+    const res = await fetch("/joke");
     const data = await res.json();
 
     if (data.question && data.answer) {
       output.textContent = `${data.question}\n\n${data.answer}`;
-    } else {
-      output.textContent = "No joke 😅";
+    } else {      output.textContent = "No joke 😅";
     }
   } catch {
     output.textContent = "Oops 😵";
