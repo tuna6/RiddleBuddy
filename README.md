@@ -49,7 +49,18 @@ docker run -p 8080:8080 -e DEEPSEEK_API_KEY={your-api-key} riddlebuddy:latest
 
 # Open browser: http://localhost:8080
 ```
+## DevOps Journey (Portfolio Highlights)
 
+- [x] Dockerized application
+- [x] Professional README with diagram
+- [ ] Automated CI/CD with GitHub Actions
+- [ ] Public image on ghcr.io
+- [ ] Deployment to Railway / Fly.io
+- [ ] Local Kubernetes deployment (kind)
+- [ ] IaC with Terraform
 
-
+## Why this project?
+Started as a fun joke app → evolved into a full DevOps showcase.  
+Goal: Demonstrate containerization, automation, orchestration, and cloud thinking.  
+Contributions, feedback, or roast welcome! 😄
 
