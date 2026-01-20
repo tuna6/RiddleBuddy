@@ -15,5 +15,12 @@ spec:
       containers:
       - name: riddlebuddy
         image: riddlebuddy:latest
+        imagePullPolicy: Never 
         ports:
         - containerPort: 8000
+        env:
+        - name: DEEPSEEK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: deepseek-secret
+              key: DEEPSEEK_API_KEY
