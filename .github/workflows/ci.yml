@@ -27,4 +27,6 @@ jobs:
             with:
               context: ./app
               push: true
-              tags: ${{ secrets.DOCKER_USERNAME }}/riddlebuddy:latest
+              tags: |
+                ${{ secrets.DOCKER_USERNAME }}/riddlebuddy:latest
+                ${{ secrets.DOCKER_USERNAME }}/riddlebuddy:${{ github.sha }}
