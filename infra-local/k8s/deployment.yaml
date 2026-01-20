@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: riddlebuddy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: riddlebuddy
+  template:
+    metadata:
+      labels:
+        app: riddlebuddy
+    spec:
+      containers:
+      - name: riddlebuddy
+        image: riddlebuddy:latest
+        ports:
+        - containerPort: 8000
