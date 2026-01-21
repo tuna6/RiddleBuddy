@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .venv
 .env
+# Gradle build artifacts
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar   # Keep wrapper jar if you commit it
+!gradle/wrapper/gradle-wrapper.properties
