@@ -1,0 +1,29 @@
+### Health check
+GET http://localhost:8080/health
+
+###
+
+### Submit LIKE
+POST http://localhost:8080/feedback
+Content-Type: application/json
+
+{
+  "jokeId": "joke-1",
+  "liked": true
+}
+
+###
+
+### Submit DISLIKE
+POST http://localhost:8080/feedback
+Content-Type: application/json
+
+{
+  "jokeId": "joke-1",
+  "liked": false
+}
+
+###
+
+### Get feedback counts
+GET http://localhost:8080/feedback/joke-1
