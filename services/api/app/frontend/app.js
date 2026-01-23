@@ -1,3 +1,5 @@
+console.log("APP.JS VERSION 2 LOADED");
+
 async function getJoke() {
   const category = document.getElementById("category").value;
   const type = document.getElementById("type").value;
@@ -15,7 +17,12 @@ async function getJoke() {
 
     questionEl.textContent = data.question;
     answerEl.textContent = data.answer;
+    const feedback = document.getElementById("feedback");
+    console.log(feedback);
+    feedback.style.display = "block";
+
   } catch {
+    console.error("ERROR:", err);
     questionEl.textContent = "Oops!";
     answerEl.textContent = "";
   }
