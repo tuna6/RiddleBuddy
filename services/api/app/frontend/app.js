@@ -1,4 +1,5 @@
 console.log("APP.JS VERSION 2 LOADED");
+let currentJokeId = null;
 
 async function getJoke() {
   const category = document.getElementById("category").value;
@@ -10,20 +11,40 @@ async function getJoke() {
   // ⏳ loading state
   questionEl.textContent = "Thinking... 🤔";
   answerEl.textContent = "";
+  document.getElementById("feedback").style.display = "none";
 
   try {
     const res = await fetch(`/joke?category=${category}&type=${type}`);
     const data = await res.json();
 
+    currentJokeId = data.id;
     questionEl.textContent = data.question;
     answerEl.textContent = data.answer;
-    const feedback = document.getElementById("feedback");
-    console.log(feedback);
-    feedback.style.display = "block";
+    document.getElementById("feedback").style.display = "block";
 
   } catch {
     console.error("ERROR:", err);
     questionEl.textContent = "Oops!";
     answerEl.textContent = "";
+  }
+}
+
+
+async function sendFeedback(type) {
+  try {
+    await fetch("http://localhost:8080/feedback", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        jokeId: currentJokeId,
+        type: type
+      })
+    });
+
+    console.log("feedback sent:", type);
+  } catch (err) {
+    console.error("feedback error", err);
   }
 }
