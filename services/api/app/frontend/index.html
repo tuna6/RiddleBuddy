@@ -26,8 +26,15 @@
   <h3 id="answer"></h3>
 
   <div id="feedback" class="feedback" style="display: none;">
-    <button class="like" onclick="sendFeedback('like')">👍 Like</button>
-    <button class="dislike" onclick="sendFeedback('dislike')">👎 Dislike</button>
+    <div class="feedback-item">
+      <span id="likes">0</span>
+      <button class="like" onclick="sendFeedback('like')">👍</button>
+    </div>
+    <div class="feedback-item">
+      <span id="dislikes">0</span>
+      <button class="dislike" onclick="sendFeedback('dislike')">👎</button>
+    </div>
+
   </div>
 
   <script src="/static/app.js"></script>

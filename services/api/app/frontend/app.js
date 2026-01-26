@@ -13,6 +13,7 @@ async function getJoke() {
   answerEl.textContent = "";
   document.getElementById("feedback").style.display = "none";
 
+
   try {
     const res = await fetch(`/joke?category=${category}&type=${type}`);
     const data = await res.json();
@@ -20,7 +21,7 @@ async function getJoke() {
     currentJokeId = data.id;
     questionEl.textContent = data.question;
     answerEl.textContent = data.answer;
-    document.getElementById("feedback").style.display = "block";
+    document.getElementById("feedback").style.display = "flex";
 
   } catch {
     console.error("ERROR:", err);
@@ -43,6 +44,15 @@ async function sendFeedback(type) {
       })
     });
 
+  const res = await fetch(`http://localhost:8080/feedback/${currentJokeId}`);
+  const data = await res.json();
+
+  document.getElementById("likes").textContent = data.likes;
+  document.getElementById("dislikes").textContent = data.dislikes;
+  if (!likesEl || !dislikesEl) {
+    console.error("Likes/dislikes elements not found");
+    return;
+  }
     console.log("feedback sent:", type);
   } catch (err) {
     console.error("feedback error", err);
