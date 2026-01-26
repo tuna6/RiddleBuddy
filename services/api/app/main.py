@@ -1,3 +1,4 @@
+from uuid import uuid4
 from fastapi import FastAPI, HTTPException
 from app.jokes import get_joke
 from app.deepseek_client import generate_joke
@@ -40,8 +41,10 @@ def joke(category: str | None = None, joke_type: str | None = None):
 
         # DeepSeek returns text → parse JSON
         data = json.loads(raw)
+        joke_id = str(uuid4())
 
         return {
+            "id": joke_id,
             "type": joke_type or "joke",
             "category": category or "random",
             "question": data["question"],

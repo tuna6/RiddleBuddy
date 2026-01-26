@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:8000")
 @RestController
 @RequestMapping("/feedback")
 public class FeedbackController {
@@ -17,7 +18,9 @@ public class FeedbackController {
     @PostMapping
     public void submit(@RequestBody Map<String, Object> body) {
         String jokeId = body.get("jokeId").toString();
-        boolean liked = Boolean.parseBoolean(body.get("liked").toString());
+        String type = body.get("type").toString();
+
+        boolean liked = "like".equalsIgnoreCase(type);
         service.addFeedback(jokeId, liked);
     }
 
