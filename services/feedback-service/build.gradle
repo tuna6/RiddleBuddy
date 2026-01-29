@@ -32,11 +32,3 @@ tasks.named('test') {
 bootJar {
     enabled = true
 }
-
-bootWar {
-    enabled = false
-}
-
-war {
-    enabled = false
-}
