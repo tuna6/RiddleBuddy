@@ -33,7 +33,7 @@ async function getJoke() {
 
 async function sendFeedback(type) {
   try {
-    await fetch("http://localhost:8080/feedback", {
+    await fetch("/feedback", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -44,7 +44,7 @@ async function sendFeedback(type) {
       })
     });
 
-  const res = await fetch(`http://localhost:8080/feedback/${currentJokeId}`);
+  const res = await fetch(`/feedback/${currentJokeId}`);
   const data = await res.json();
 
   document.getElementById("likes").textContent = data.likes;

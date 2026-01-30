@@ -9,4 +9,5 @@ spring:
 server:
   port: 8080
 
-      
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
