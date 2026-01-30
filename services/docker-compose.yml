@@ -8,6 +8,7 @@ services:
       - "6379:6379"
 
   feedback-service:
+    build: ./feedback-service
     image: feedback-service:latest
     container_name: feedback-service
     depends_on:
@@ -20,11 +21,12 @@ services:
       - "8081:8080"
 
   api-service:
+    build: ./api
     image: riddle-api:latest
     container_name: api-service
     depends_on:
       - feedback-service
     environment:
-      FEEDBACK_SERVICE_URL: http://feedback-service:8080
+      FEEDBACK_SERVICE_URL: http://localhost:8081
     ports:
       - "8000:8000"
