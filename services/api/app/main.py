@@ -1,3 +1,5 @@
+import http
+import os, httpx
 from uuid import uuid4
 from fastapi import FastAPI, HTTPException
 from app.jokes import get_joke
@@ -6,6 +8,12 @@ import json
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
+FEEDBACK_SERVICE_URL = os.getenv(
+    "FEEDBACK_SERVICE_URL",
+    "http://localhost:8080"
+)
+TIMEOUT = 3.0
 
 app = FastAPI(
     title="Joke & Riddle Buddy",
@@ -57,3 +65,27 @@ def joke(category: str | None = None, joke_type: str | None = None):
             status_code=503,
             detail=str(e)
         )
+    
+    FEEDBACK_SERVICE_URL = os.getenv(
+    "FEEDBACK_SERVICE_URL",
+    "http://feedback-service:8080"
+)
+
+client = httpx.AsyncClient(timeout=3.0)
+
+@app.post("/feedback")
+async def post_feedback(payload: dict):
+    r = await client.post(
+        f"{FEEDBACK_SERVICE_URL}/feedback",
+        json=payload
+    )
+    return r.json() if r.content else {"ok": True}
+
+
+@app.get("/feedback/{joke_id}")
+async def get_feedback(joke_id: str):
+    r = await client.get(
+        f"{FEEDBACK_SERVICE_URL}/feedback/{joke_id}"
+    )
+    return r.json()
+
