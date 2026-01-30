@@ -28,5 +28,7 @@ services:
       - feedback-service
     environment:
       FEEDBACK_SERVICE_URL: http://localhost:8081
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+
     ports:
       - "8000:8000"
