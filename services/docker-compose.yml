@@ -27,7 +27,7 @@ services:
     depends_on:
       - feedback-service
     environment:
-      FEEDBACK_SERVICE_URL: http://localhost:8081
+      FEEDBACK_SERVICE_URL: http://feedback-service:8080
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
 
     ports:
