@@ -22,7 +22,7 @@ jobs:
               username: ${{ secrets.DOCKER_USERNAME }}
               password: ${{ secrets.DOCKER_TOKEN }}
 
-          - name: Build and push Docker image
+          - name: Build and push API image
             uses: docker/build-push-action@v4
             with:
               context: ./services/api
@@ -30,3 +30,12 @@ jobs:
               tags: |
                 ${{ secrets.DOCKER_USERNAME }}/riddlebuddy:latest
                 ${{ secrets.DOCKER_USERNAME }}/riddlebuddy:${{ github.sha }}
+          - name: Build and push Feedback image
+            uses: docker/build-push-action@v4
+            with:
+              context: ./services/feedback
+              push: true
+              tags: |
+                ${{ secrets.DOCKER_USERNAME }}/riddlebuddy-feedback:latest
+                ${{ secrets.DOCKER_USERNAME }}/riddlebuddy-feedback:${{ github.sha }}
+
