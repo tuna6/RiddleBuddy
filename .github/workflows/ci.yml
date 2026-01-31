@@ -33,7 +33,7 @@ jobs:
           - name: Build and push Feedback image
             uses: docker/build-push-action@v4
             with:
-              context: ./services/feedback
+              context: ./services/feedback-service
               push: true
               tags: |
                 ${{ secrets.DOCKER_USERNAME }}/riddlebuddy-feedback:latest
