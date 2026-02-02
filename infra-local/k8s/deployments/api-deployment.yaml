@@ -26,4 +26,4 @@ spec:
               name: deepseek-secret
               key: DEEPSEEK_API_KEY
         - name: FEEDBACK_SERVICE_URL
-          value: "http://feedback:8080"
+          value: "http://feedback-service:8080"
