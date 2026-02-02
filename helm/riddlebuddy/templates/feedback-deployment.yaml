@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback
+  namespace: riddlebuddy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feedback
+  template:
+    metadata:
+      labels:
+        app: feedback
+    spec:
+      containers:
+      - name: feedback
+        image: tuna610/riddlebuddy-feedback:latest
+        imagePullPolicy: IfNotPresent 
+        ports:
+        - containerPort: 8080
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: riddle-api-service
+  namespace: riddlebuddy
+spec:
+  selector:
+    app: riddle-api
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: NodePort

@@ -1,0 +1,23 @@
+api:
+  image:
+    repository: tuna610/riddlebuddy
+    tag: latest
+  replicas: 2
+  port: 8000
+  nodePort: 30080
+
+feedback:
+  image:
+    repository: tuna610/feedback-service
+    tag: latest
+  replicas: 2
+  port: 8080
+
+redis:
+  image:
+    repository: redis
+    tag: "7"
+  port: 6379
+
+secrets:
+  deepseekApiKey: "YOUR_DEEPSEEK_API_KEY"
