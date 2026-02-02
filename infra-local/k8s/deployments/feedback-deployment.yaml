@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: feedback
-        image: tuna610/feedback-service:latest
-        imagePullPolicy: Never 
+        image: tuna610/riddlebuddy-feedback:latest
+        imagePullPolicy: IfNotPresent 
         ports:
         - containerPort: 8080
         env:
