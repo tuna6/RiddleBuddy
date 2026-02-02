@@ -1,26 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: feedback
-  namespace: riddlebuddy
+  name: {{ .Release.Name }}-feedback
 spec:
-  replicas: 2
+  replicas: {{ .Values.feedback.replicas }}
   selector:
     matchLabels:
-      app: feedback
+      app: {{ .Release.Name }}-feedback
   template:
     metadata:
       labels:
-        app: feedback
+        app: {{ .Release.Name }}-feedback
     spec:
       containers:
-      - name: feedback
-        image: tuna610/riddlebuddy-feedback:latest
+      - name: {{ .Release.Name }}-feedback
+        image: "{{ .Values.feedback.image.repository }}:{{ .Values.feedback.image.tag }}"
         imagePullPolicy: IfNotPresent 
         ports:
-        - containerPort: 8080
+        - containerPort: {{ .Values.feedback.port }}
         env:
         - name: REDIS_HOST
-          value: "redis-service"
+          value: {{ .Release.Name }}-redis-service
         - name: REDIS_PORT
-          value: "6379"
+          value: {{ .Values.redis.port }}

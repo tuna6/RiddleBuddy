@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: feedback-service
-  namespace: riddlebuddy
+  name: {{ .Release.Name }}-feedback-service
 spec:
+  type: ClusterIP
   selector:
-    app: feedback
+    app: {{ .Release.Name }}-feedback
   ports:
   - protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: {{ .Values.feedback.port }}
+    targetPort: {{ .Values.feedback.port }}

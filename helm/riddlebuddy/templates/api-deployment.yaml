@@ -1,24 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: riddle-api
-  namespace: riddlebuddy
+  name: {{ .Release.Name }}-api
 spec:
-  replicas: 2
+  replicas: {{ .Values.api.replicas }}
   selector:
     matchLabels:
-      app: riddle-api
+      app: {{ .Release.Name }}-api
   template:
     metadata:
       labels:
-        app: riddle-api
+        app: {{ .Release.Name }}-api
     spec:
       containers:
-      - name: riddle-api
-        image: tuna610/riddlebuddy:latest
-        imagePullPolicy: IfNotPresent 
+      - name: {{ .Release.Name }}-api
+        image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+        imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 8000
+        - containerPort: {{ .Values.api.port }}
         env:
         - name: DEEPSEEK_API_KEY
           valueFrom:
@@ -26,4 +25,4 @@ spec:
               name: deepseek-secret
               key: DEEPSEEK_API_KEY
         - name: FEEDBACK_SERVICE_URL
-          value: "http://feedback-service:8080"
+          value: "http://{{ .Release.Name }}-feedback-service:{{ .Values.feedback.port }}"

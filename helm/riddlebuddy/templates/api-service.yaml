@@ -1,13 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: riddle-api-service
-  namespace: riddlebuddy
+  name: {{ .Release.Name }}-api-service
 spec:
   selector:
-    app: riddle-api
+    app: {{ .Release.Name }}-api
   ports:
   - protocol: TCP
-    port: 8000
-    targetPort: 8000
-  type: NodePort
+    port: {{.Values.api.port}}
+    targetPort: {{.Values.api.port}}
+    nodePort: {{.Values.api.nodePort}}

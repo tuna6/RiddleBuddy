@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
-  namespace: riddlebuddy
+  name: {{ .Release.Name }}-redis
 spec:
-  replicas: 2
+  replicas: {{ .Values.redis.replicas}}
   selector:
     matchLabels:
-      app: redis
+      app: {{ .Release.Name }}-redis
   template:
     metadata:
       labels:
-        app: redis
+        app: {{ .Release.Name }}-redis
     spec:
       containers:
-      - name: redis
-        image: redis:latest
+      - name: {{ .Release.Name }}-redis
+        image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}""
         imagePullPolicy: IfNotPresent 
         ports:
-        - containerPort: 6379
+        - containerPort: {{ .Values.redis.port }}
