@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: riddle-api
-        image: riddle-api:latest
+        image: tuna610/riddle-api:latest
         imagePullPolicy: IfNotPresent 
         ports:
         - containerPort: 8000
