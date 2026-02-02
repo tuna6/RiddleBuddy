@@ -1,21 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: riddlebuddy
+  name: riddle-api
+  namespace: riddlebuddy
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: riddlebuddy
+      app: riddle-api
   template:
     metadata:
       labels:
-        app: riddlebuddy
+        app: riddle-api
     spec:
       containers:
-      - name: riddlebuddy
-        image: riddlebuddy:latest
-        imagePullPolicy: Never 
+      - name: riddle-api
+        image: riddle-api:latest
+        imagePullPolicy: IfNotPresent 
         ports:
         - containerPort: 8000
         env:
@@ -24,3 +25,5 @@ spec:
             secretKeyRef:
               name: deepseek-secret
               key: DEEPSEEK_API_KEY
+        - name: FEEDBACK_SERVICE_URL
+          value: "http://feedback:8080"

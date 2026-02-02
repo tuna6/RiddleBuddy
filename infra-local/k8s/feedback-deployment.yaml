@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback
+  namespace: riddlebuddy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feedback
+  template:
+    metadata:
+      labels:
+        app: feedback
+    spec:
+      containers:
+      - name: feedback
+        image: feedback-service:latest
+        imagePullPolicy: Never 
+        ports:
+        - containerPort: 8080
