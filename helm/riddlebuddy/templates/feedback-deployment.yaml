@@ -15,7 +15,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-feedback
         image: "{{ .Values.feedback.image.repository }}:{{ .Values.feedback.image.tag }}"
-        imagePullPolicy: IfNotPresent 
+        imagePullPolicy: Always 
         ports:
         - containerPort: {{ .Values.feedback.port }}
         env:
