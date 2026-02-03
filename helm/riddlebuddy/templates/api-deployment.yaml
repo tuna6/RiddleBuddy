@@ -9,6 +9,8 @@ spec:
       app: {{ .Release.Name }}-api
   template:
     metadata:
+      annotations:
+        rollme: "{{ .Values.image.tag}}"
       labels:
         app: {{ .Release.Name }}-api
     spec:
