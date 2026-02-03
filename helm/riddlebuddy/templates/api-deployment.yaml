@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       annotations:
-        rollme: "{{ .Values.image.tag}}"
+        rollme: "{{ .Values.api.image.tag }}"
       labels:
         app: {{ .Release.Name }}-api
     spec:
