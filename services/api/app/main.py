@@ -1,13 +1,14 @@
-import http
-import os, httpx
+import os, httpx, time
 from uuid import uuid4
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import Response
 from app.jokes import get_joke
 from app.deepseek_client import generate_joke
 import json
-import requests
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+
 
 FEEDBACK_SERVICE_URL = os.getenv(
     "FEEDBACK_SERVICE_URL",
@@ -88,4 +89,47 @@ async def get_feedback(joke_id: str):
         f"{FEEDBACK_SERVICE_URL}/feedback/{joke_id}"
     )
     return r.json()
+
+# ---- METRICS ----
+REQUEST_COUNT = Counter(
+    "http_requests_total",
+    "Total HTTP requests",
+    ["method", "path", "status"]
+)
+
+REQUEST_LATENCY = Histogram(
+    "http_request_duration_seconds",
+    "HTTP request latency",
+    ["path"]
+)
+
+# ---- MIDDLEWARE ----
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    start_time = time.time()
+
+    response = await call_next(request)
+
+    duration = time.time() - start_time
+
+    path = request.url.path
+
+    REQUEST_COUNT.labels(
+        method=request.method,
+        path=path,
+        status=response.status_code
+    ).inc()
+
+    REQUEST_LATENCY.labels(path=path).observe(duration)
+
+    return response
+
+
+# ---- METRICS ENDPOINT ----
+@app.get("/metrics")
+def metrics():
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST
+    )
 

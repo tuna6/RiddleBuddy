@@ -10,3 +10,12 @@ server:
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
