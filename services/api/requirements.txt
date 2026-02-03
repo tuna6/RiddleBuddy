@@ -3,3 +3,4 @@ uvicorn
 requests
 httpx
 prometheus-client
+prometheus-fastapi-instrumentator

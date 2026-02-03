@@ -8,6 +8,7 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 FEEDBACK_SERVICE_URL = os.getenv(
@@ -21,6 +22,7 @@ app = FastAPI(
     description="Safe jokes and riddles for kids",
     version="0.1.0"
 )
+Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
     CORSMiddleware,
