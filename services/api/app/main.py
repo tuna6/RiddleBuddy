@@ -1,4 +1,4 @@
-import os, httpx, time
+import os, httpx, time, requests
 from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import Response
