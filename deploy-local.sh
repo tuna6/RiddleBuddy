@@ -23,7 +23,7 @@ kubectl create namespace $NAMESPACE_MON --dry-run=client -o yaml | kubectl apply
 
 echo "🚀 Deploying RiddleBuddy app (Helm)..."
 helm upgrade --install $RELEASE_APP \
-  ../../helm/riddlebuddy \
+  ./helm/riddlebuddy \
   -n $NAMESPACE_APP \
   --set secrets.deepseekApiKey="$DEEPSEEK_API_KEY"
 
