@@ -1,9 +1,21 @@
 import os
 import requests
 import random
+from prometheus_client import Histogram, Counter
 
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
+
+
+deepseek_requests_total = Counter(
+    "deepseek_requests_total",
+    "Total DeepSeek API calls",
+    ["status"]
+)
+deepseek_latency = Histogram(
+    "deepseek_latency_seconds",
+    "DeepSeek API latency"
+)
 
 if not DEEPSEEK_API_KEY:
     raise RuntimeError("DEEPSEEK_API_KEY not set")
@@ -53,11 +65,17 @@ def generate_joke(category=None, joke_type=None):
         "Content-Type": "application/json"
     }
 
-    response = requests.post(DEEPSEEK_URL, json=payload, headers=headers, timeout=10)
-    response.raise_for_status()
+    with deepseek_latency.time():
+        response = requests.post(DEEPSEEK_URL, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
 
     if response.status_code != 200:
         return {"joke": "Try again 😂"}
+    if response.status_code >= 500:
+        deepseek_requests_total.labels(status="5xx").inc()
+    else:
+        deepseek_requests_total.labels(status="success").inc()
+
     print(f"Response code = {response.status_code}")
     print(f"Response json = {response.json()}")
 
