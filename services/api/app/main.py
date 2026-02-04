@@ -68,11 +68,6 @@ def joke(category: str | None = None, joke_type: str | None = None):
             status_code=503,
             detail=str(e)
         )
-    
-    FEEDBACK_SERVICE_URL = os.getenv(
-    "FEEDBACK_SERVICE_URL",
-    "http://feedback-service:8080"
-)
 
 client = httpx.AsyncClient(timeout=3.0)
 
