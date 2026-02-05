@@ -45,12 +45,12 @@ helm upgrade --install promtail \
 echo "📈 Deploying  Prometheus"
 helm upgrade --install prometheus prometheus-community/prometheus \
   -n $NAMESPACE_MON \
-  -f prometheus/values.yaml
+  -f infra-local/k3s/prometheus/values.yaml
 
 echo "📈 Deploying Grafana..."
 helm upgrade --install $RELEASE_GRAFANA grafana/grafana \
   -n $NAMESPACE_MON \
-  -f grafana/values.yaml
+  -f infra-local/k3s/grafana/values.yaml
 
 echo "✅ All components deployed successfully!"
 echo ""
