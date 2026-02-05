@@ -41,4 +41,4 @@ dashboardProviders:
 dashboards:
   default:
     riddlebuddy:
-      file: dashboards/riddlebuddy.json
+      file: infra-local/k3s/grafanadashboards/riddlebuddy.json
