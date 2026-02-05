@@ -1,0 +1,21 @@
+server:
+  retention: 3d
+
+  service:
+    type: ClusterIP
+
+  persistentVolume:
+    enabled: true
+    size: 5Gi
+
+alertmanager:
+  enabled: false
+
+pushgateway:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true

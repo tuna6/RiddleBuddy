@@ -1,0 +1,3 @@
+loki:
+  serviceName: loki
+  servicePort: 3100
