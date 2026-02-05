@@ -40,7 +40,7 @@ echo "==> Install Promtail"
 helm upgrade --install promtail \
   grafana/promtail \
   -n $NAMESPACE_MON \
-  -f promtail/values.yaml
+  -f infra-local/k3s/promtail/values.yaml
 
 echo "📈 Deploying  Prometheus"
 helm upgrade --install prometheus prometheus-community/prometheus \
