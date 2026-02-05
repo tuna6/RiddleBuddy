@@ -13,12 +13,14 @@ datasources:
     apiVersion: 1
     datasources:
       - name: Prometheus
+        uuid: prometheus
         type: prometheus
         access: proxy
         url: http://prometheus-server.monitoring.svc.cluster.local
         isDefault: true
 
       - name: Loki
+        uuid: loki
         type: loki
         access: proxy
         url: http://loki.monitoring.svc.cluster.local:3100

@@ -37,7 +37,7 @@
     {
       "datasource": {
         "type": "loki",
-        "uid": "afc40cqq7kdfkb"
+        "uid": "loki"
       },
       "fieldConfig": {
         "defaults": {
@@ -90,7 +90,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "afc40cqq7kdfkb"
+            "uid": "loki"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -101,7 +101,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "afc40cqq7kdfkb"
+            "uid": "loki"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -117,7 +117,7 @@
     {
       "datasource": {
         "type": "loki",
-        "uid": "afc40cqq7kdfkb"
+        "uid": "loki"
       },
       "fieldConfig": {
         "defaults": {
@@ -200,7 +200,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "afc40cqq7kdfkb"
+            "uid": "loki"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -212,7 +212,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "afc40cqq7kdfkb"
+            "uid": "loki"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -242,7 +242,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -319,7 +319,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -391,7 +391,7 @@
     },
     {
       "datasource": {
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "description": "Is my service failing ?",
       "fieldConfig": {
@@ -457,7 +457,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -534,7 +534,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -621,7 +621,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "editorMode": "builder",
           "expr": "rate(http_server_requests_seconds_count[10m])",
@@ -636,7 +636,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -730,7 +730,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -820,7 +820,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.95,\r\n  sum(rate(http_request_duration_seconds_bucket[5m])) by (le)\r\n)\r\n",
@@ -837,7 +837,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bfc3qyd0v0j5sb"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -927,7 +927,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "sum(rate(http_server_requests_seconds_count[5m])) by (service)",
@@ -954,7 +954,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1049,7 +1049,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1143,7 +1143,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1238,7 +1238,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1346,7 +1346,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1411,7 +1411,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1473,7 +1473,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bfc3qyd0v0j5sb"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
