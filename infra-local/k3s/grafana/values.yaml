@@ -32,5 +32,5 @@ sidecar:
     folder: /var/lib/grafana/dashboards
     provider:
       disableDelete: false
-      foldersFromFilesStructure: true  
+      foldersFromFilesStructure: false  
     searchNamespace: "monitoring"

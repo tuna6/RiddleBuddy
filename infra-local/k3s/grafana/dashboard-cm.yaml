@@ -332,10 +332,11 @@ data:
             "type": "prometheus",
             "uid": "prometheus"
           },
+          "description": "Check request success rate ",
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "continuous-GrYlRd"
+                "mode": "palette-classic"
               },
               "mappings": [],
               "thresholds": {
@@ -1597,4 +1598,3 @@ data:
       "uid": "adzs5fs",
       "version": 1
     }
-
