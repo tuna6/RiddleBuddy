@@ -25,20 +25,12 @@ datasources:
         access: proxy
         url: http://loki.monitoring.svc.cluster.local:3100
 
-dashboardProviders:
-  dashboardproviders.yaml:
-    apiVersion: 1
-    providers:
-      - name: default
-        orgId: 1
-        folder: RiddleBuddy
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/default
-
-dashboards:
-  default:
-    riddlebuddy:
-      file: infra-local/k3s/grafanadashboards/riddlebuddy.json
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    folder: /var/lib/grafana/dashboards
+    provider:
+      disableDelete: false
+      foldersFromFilesStructure: true  
+    searchNamespace: "monitoring"

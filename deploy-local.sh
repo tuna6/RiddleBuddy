@@ -11,7 +11,7 @@ RELEASE_GRAFANA="grafana"
 echo "🔎 Checking required environment variables..."
 
 if [ -z "$DEEPSEEK_API_KEY" ]; then
-  echo "❌ DEEPSEEK_API_KEY is not set"
+echo "❌ DEEPSEEK_API_KEY is not set"
   exit 1
 fi
 
@@ -48,6 +48,7 @@ helm upgrade --install prometheus prometheus-community/prometheus \
   -f infra-local/k3s/prometheus/values.yaml
 
 echo "📈 Deploying Grafana..."
+kubectl apply -f infra-local/k3s/grafana/dashboard-cm.yaml
 helm upgrade --install $RELEASE_GRAFANA grafana/grafana \
   -n $NAMESPACE_MON \
   -f infra-local/k3s/grafana/values.yaml

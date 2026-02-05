@@ -9,21 +9,23 @@ helm repo update
 
 kubectl create ns $NAMESPACE || true
 
-echo "==> Install Prometheus + Grafana"
-helm upgrade --install kube-prometheus-stack \
-  prometheus-community/kube-prometheus-stack \
-  -n $NAMESPACE \
-  -f prometheus-values.yaml
-
-echo "==> Install Loki (SingleBinary)"
-helm upgrade --install loki \
-  grafana/loki \
-  -n $NAMESPACE \
-  -f loki/loki-values.yaml
+helm upgrade --install $RELEASE_LOKI grafana/loki \
+  -n $NAMESPACE_MON \
+  -f infra-local/k3s/loki/values.yaml
 
 echo "==> Install Promtail"
 helm upgrade --install promtail \
   grafana/promtail \
-  -n $NAMESPACE
+  -n $NAMESPACE_MON \
+  -f infra-local/k3s/promtail/values.yaml
 
-echo "==> Done"
+echo "📈 Deploying  Prometheus"
+helm upgrade --install prometheus prometheus-community/prometheus \
+  -n $NAMESPACE_MON \
+  -f infra-local/k3s/prometheus/values.yaml
+
+echo "📈 Deploying Grafana..."
+kubectl apply -f infra-local/k3s/grafana/dashboard-cm.yaml
+helm upgrade --install $RELEASE_GRAFANA grafana/grafana \
+  -n $NAMESPACE_MON \
+  -f infra-local/k3s/grafana/values.yaml
