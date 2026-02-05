@@ -336,14 +336,14 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
+                "mode": "continuous-RdYlGr"
               },
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "red",
                     "value": 0
                   },
                   {
@@ -409,7 +409,7 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "thresholds"
+                "mode": "continuous-GrYlRd"
               },
               "mappings": [],
               "thresholds": {

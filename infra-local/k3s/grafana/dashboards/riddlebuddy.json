@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -321,17 +321,18 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "Check request success rate ",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "continuous-RdYlGr"
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": 0
               },
               {
@@ -397,7 +398,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-GrYlRd"
           },
           "mappings": [],
           "thresholds": {
@@ -1582,7 +1583,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "TestDashboard",
+  "title": "RiddleBuddy",
   "uid": "adzs5fs",
-  "version": 14
+  "version": 1
 }
