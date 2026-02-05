@@ -16,48 +16,41 @@ GitHub Actions CI: (badge will appear after pipeline setup)
 
 ## Architecture
 
-Simple monolith: FastAPI serves both API and static HTML/JS frontend.
-
-```mermaid
-graph TD
-    A[User Browser] -->|Requests| B[FastAPI App]
-    B --> C[Joke/Riddle Generator]
-    B --> D[HTML + CSS + JS]
-    subgraph Docker Container
-        B
-        C
-        D
-    end
-```
+- riddlebuddy-api (FastAPI)
+- riddlebuddy-feedback (Java Spring)
+- Redis
+- Monitoring stack:
+ -- Prometheus (metrics)
+ -- Loki + Promtail (logs)
+ -- Grafana (dashboards)
 
 
 ## Tech stack 
 - Backend & API: FastAPI (Python)  
 - Frontend: Basic HTML + CSS + Vanilla JS  
 - Containerization: Docker  
-- Future: GitHub Actions, Kubernetes (kind/minikube), Terraform (DigitalOcean/GCP), Prometheus + Grafana  
+- GitHub Actions, Kubernetes (k3s), Terraform (later), Prometheus + Grafana  + Loki
+
+## Prerequisites
+- Linux
+- Docker
+- k3s
+- kubectl
+- helm
+- DEEPSEEK_API_KEY env var
 
 ## Quick Start (Local)
 ```bash
 # Clone repo
+export DEEPSEEK_API_KEY=xxxx
 git clone https://github.com/yourusername/riddlebuddy.git
-cd riddlebuddy/app
+chmod +x deploy-local.sh
+./deploy-local.sh
 
-# Build & run with Docker
-docker build -t riddlebuddy .
-docker run -p 8080:8080 -e DEEPSEEK_API_KEY={your-api-key} riddlebuddy:latest
 
-# Open browser: http://localhost:8080
+# Access app: http://localhost:30080/static
+# Access grafana: http://localhost:3000
 ```
-## DevOps Journey (Portfolio Highlights)
-
-- [x] Dockerized application
-- [x] Professional README with diagram
-- [ ] Automated CI/CD with GitHub Actions
-- [ ] Public image on ghcr.io
-- [ ] Deployment to Railway / Fly.io
-- [ ] Local Kubernetes deployment (kind)
-- [ ] IaC with Terraform
 
 ## Why this project?
 Started as a fun joke app → evolved into a full DevOps showcase.  
