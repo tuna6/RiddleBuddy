@@ -35,6 +35,12 @@ config:
       auth:
         authenticator: sigv4auth
 
+livenessProbe:
+  enabled: false
+
+readinessProbe:
+  enabled: false
+
   extensions:
     health_check:
       endpoint: 0.0.0.0:13133
