@@ -37,6 +37,7 @@ config:
 
   extensions:
     health_check:
+      endpoint: 0.0.0.0:13133
     sigv4auth:
       region: ${AWS_REGION}
       service: aps
