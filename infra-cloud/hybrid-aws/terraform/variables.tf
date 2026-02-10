@@ -30,3 +30,12 @@ variable "allowed_ip" {
   description = "IP allowed to access Grafana (your public IP)"
   type        = string
 }
+
+variable "instance_type" {
+  type    = string
+  default = "t2.micro"
+}
+
+variable "key_name" {
+  description = "EC2 SSH key pair name"
+}

@@ -25,9 +25,11 @@ resource "aws_iam_policy" "amp_read" {
       {
         Effect = "Allow"
         Action = [
+          "aps:ListWorkspaces",
+          "aps:DescribeWorkspace",
           "aps:QueryMetrics",
-          "aps:GetSeries",
           "aps:GetLabels",
+          "aps:GetSeries",
           "aps:GetMetricMetadata"
         ]
         Resource = "*"
