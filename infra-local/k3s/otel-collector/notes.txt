@@ -1,0 +1,32 @@
+pods is forbidden:
+User "system:serviceaccount:monitoring:otel-collector"
+cannot list resource "pods" in API group "" at the cluster scope
+
+OTEL does not have access to discover k8s pods -> RBAC objects is missing
+Need 
+
+ClusterRole
+ClusterRoleBinding
+
+
+========================
+Warning Unhealthy 11s (x8 over 49s) kubelet Readiness probe failed: Get "http://10.42.0.233:13133/": dial tcp 10.42.0.233:13133: connect: connection refused Warning Unhealthy 11s (x2 over 41s) kubelet Liveness probe failed: Get "http://10.42.0.233:13133/": dial tcp 10.42.0.233:13133: connect: connection refused
+=> health endpoint is not listening, due to 
+- Missing AWS creds → sigv4auth fails → collector crashes after startup → probes fail. => Add temp env vars for testing
+- add healthcheck endpoint in values.yaml
+
+The health_check extension is configured with endpoint: 0.0.0.0:13133, which is correct, but in recent versions of the OpenTelemetry Collector (especially contrib ≥0.104.0 or so), the default behavior or subtle bugs can cause the HTTP server to bind only to localhost (127.0.0.1) instead of all interfaces (0.0.0.0), or the server fails to start properly / respond reliably.
+
+
+=====================================
+The error occurs because the OpenTelemetry Collector Helm chart does not have a top-level env key in its schema (values.schema.json enforces this strictly). That's why --set env.AWS_REGION=... fails with "Additional property env is not allowed".
+Instead, use extraEnvs (an array at the root level) to add environment variables to the collector pods. This is the standard way in this chart.
+
+
+====================================
+prometheus annotation was set at services => work in kubernetes prometheus
+but OTel only work with pods => need to move the annotations to pods or add service in values.yaml
+
+
+========================================
+use wrong relabel_configs of node for service (when change pod to service make sure to change the matching label)
