@@ -7,9 +7,28 @@ serviceAccount:
   create: true
   name: otel-collector
 
-extraEnvFrom:
-  - secretRef:
-      name: otel-aws-creds
+# Add this at the root level of your values.yaml
+extraEnvs:
+  - name: AWS_REGION
+    valueFrom:
+      secretKeyRef:
+        name: otel-aws-creds
+        key: AWS_REGION
+  - name: AMP_WORKSPACE_ID
+    valueFrom:
+      secretKeyRef:
+        name: otel-aws-creds
+        key: AMP_WORKSPACE_ID
+  - name: AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: otel-aws-creds
+        key: AWS_ACCESS_KEY_ID
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: otel-aws-creds
+        key: AWS_SECRET_ACCESS_KEY
 
 config:
   receivers:
