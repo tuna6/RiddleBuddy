@@ -65,7 +65,7 @@ resource "aws_instance" "grafana" {
     volume_type = "gp3"  
 }
   iam_instance_profile = aws_iam_instance_profile.grafana.name
-
+  user_data_replace_on_change = true
   user_data = templatefile("${path.module}/user_data/grafana.sh", {
     amp_datasource = local.amp_datasource
     amp_dashboard  = local.amp_dashboard
