@@ -23,4 +23,8 @@ helm upgrade --install $RELEASE_APP \
   -n $NAMESPACE_APP \
   --set secrets.deepseekApiKey="$DEEPSEEK_API_KEY"
 
+echo "✅ All components deployed successfully!"
+echo ""
+echo "🔍 Useful commands:"
 echo "  kubectl get pods -n $NAMESPACE_APP"
+echo "  kubectl get pods -n $NAMESPACE_MON"

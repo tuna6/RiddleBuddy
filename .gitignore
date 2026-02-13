@@ -14,6 +14,8 @@ build/
 .terraform/
 *.tfstate
 *.tfstate.*
+terraform.exe
+windows_amd64/
 
 # Crash logs
 crash.log

@@ -47,3 +47,18 @@ resource "aws_iam_instance_profile" "grafana" {
   name = "${var.project_name}-grafana-profile"
   role = aws_iam_role.grafana.name
 }
+
+resource "aws_iam_role_policy" "grafana_s3" {
+  role = aws_iam_role.grafana.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = ["s3:GetObject"]
+        Resource = aws_s3_object.amp_dashboard.arn
+      }
+    ]
+  })
+}

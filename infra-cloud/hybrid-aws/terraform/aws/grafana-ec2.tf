@@ -49,9 +49,6 @@ locals {
       amp_workspace_id  = aws_prometheus_workspace.this.id
     }
   )
-  amp_dashboard = templatefile(
-    "${path.module}/dashboards/riddlebuddy_amp.json.tpl", {}
-  )
 }
 
 resource "aws_instance" "grafana" {
@@ -65,10 +62,9 @@ resource "aws_instance" "grafana" {
     volume_type = "gp3"  
 }
   iam_instance_profile = aws_iam_instance_profile.grafana.name
-  user_data_replace_on_change = true
   user_data = templatefile("${path.module}/user_data/grafana.sh", {
     amp_datasource = local.amp_datasource
-    amp_dashboard  = local.amp_dashboard
+    dashboard_bucket = aws_s3_bucket.grafana_dashboards.bucket
   })
 
   tags = {
@@ -77,4 +73,3 @@ resource "aws_instance" "grafana" {
     Role    = "monitoring"
   }
 }
-

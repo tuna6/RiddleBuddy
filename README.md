@@ -44,13 +44,23 @@ GitHub Actions CI: (badge will appear after pipeline setup)
 # Clone repo
 export DEEPSEEK_API_KEY=xxxx
 git clone https://github.com/yourusername/riddlebuddy.git
-chmod +x deploy-local.sh
+chmod +x deploy-local-full.sh
 ./deploy-local.sh
 
 
 # Access app: http://localhost:30080/static
 # Access grafana: http://localhost:3000
 ```
+
+## Quick Start (Local + aws monitoring)
+```bash
+# Clone repo
+export DEEPSEEK_API_KEY=xxxx
+git clone https://github.com/yourusername/riddlebuddy.git
+chmod +x deploy-local.sh
+./deploy-local.sh
+
+
 
 ## Why this project?
 Started as a fun joke app → evolved into a full DevOps showcase.  

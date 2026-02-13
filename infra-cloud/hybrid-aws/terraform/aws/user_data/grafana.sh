@@ -24,14 +24,33 @@ grafana-cli plugins install grafana-amazonprometheus-datasource
 mkdir -p /etc/grafana/provisioning/datasources
 
 # Write datasource config
-cat <<'DATASOURCE' >/etc/grafana/provisioning/datasources/amp.yaml
+cat <<DATASOURCE >/etc/grafana/provisioning/datasources/amp.yaml
 ${amp_datasource}
 DATASOURCE
 
-# Write datasource config
-cat <<'DASHBOARD' >/etc/grafana/provisioning/dashboards/riddlebuddy.yaml
-${amp_dashboard}
-DASHBOARD
+# Create dashboard directory
+mkdir -p /var/lib/grafana/dashboards
+
+# Download from S3
+aws s3 cp \
+  s3://${dashboard_bucket}/riddlebuddy_amp.json \
+  /var/lib/grafana/dashboards/riddlebuddy_amp.json
+
+chown -R grafana:grafana /var/lib/grafana/dashboards
+
+cat <<EOF >/etc/grafana/provisioning/dashboards/dashboard.yaml
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
+EOF
 
 # Enable + Start Grafana
 systemctl daemon-reload
