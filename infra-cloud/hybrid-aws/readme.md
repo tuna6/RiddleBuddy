@@ -1,10 +1,13 @@
-## Purpose
+# RiddleBuddy – Hybrid Local → Amazon Managed Prometheus Monitoring
 
-This folder contains infrastructure for a hybrid deployment model:
-- Application runs locally
-- Monitoring runs on AWS
+This project deploys:
 
-The goal is to gain cloud-grade observability without moving the entire application to the cloud.
+- Local Kubernetes application
+- OpenTelemetry Collector
+- Remote write to Amazon Managed Prometheus (AMP)
+- Terraform-managed AWS + Kubernetes infrastructure
+
+---
 
 ## Why a hybrid setup?
 
@@ -34,23 +37,152 @@ This approach was chosen for these reasons:
 - Hybrid → Full AWS (EKS) later
 - Monitoring architecture stays largely the same
 
-## What lives here
+---
 
-- This folder provisions AWS-side monitoring only
-  -- Amazon Managed Prometheus (metrics storage)
-  -- Grafana on EC2 (visualization, IaaS-style)
-  --S3 (cheap log retention)
-- The application itself is out of scope for this folder.
+# Architecture
 
-## When to use this setup
+Local k3s cluster  
+→ OpenTelemetry Collector  
+→ SigV4 authentication  
+→ Amazon Managed Prometheus (AMP)
 
-- Developing locally but wanting persistent dashboards
-- Learning hybrid cloud monitoring
-- Demonstrating DevOps architecture with cost constraints
-- Preparing for a future EKS deployment
+Infrastructure managed via Terraform:
+- AWS (AMP, IAM, S3 backend)
+- Kubernetes (namespace, secret, Helm release)
 
-## Notes
+---
 
-- Infrastructure is managed with Terraform and executed locally
-- This setup prioritizes simplicity over perfection
-- Refactoring into shared modules may happen later if needed
+# Prerequisites
+
+- AWS account
+- AWS credentials exported:
+
+```bash
+export AWS_ACCESS_KEY_ID=your_access_key
+export AWS_SECRET_ACCESS_KEY=your_secret_key
+```
+
+- `kubectl` configured to your local cluster
+- Terraform installed
+- Helm installed
+
+---
+
+# Step 1 — Configure Terraform Backend (Required)
+
+S3 bucket names are globally unique.
+
+Create your own S3 bucket and update:
+
+```
+infra-cloud/hybrid-aws/terraform/backend/backend.tf
+```
+
+Example:
+
+```hcl
+backend "s3" {
+  bucket = "<your-unique-bucket-name>"
+  key    = "hybrid-aws/terraform.tfstate"
+  region = "ap-southeast-1"
+}
+```
+
+Then run:
+
+```bash
+cd infra-cloud/hybrid-aws/terraform/backend
+terraform init -reconfigure
+terraform apply
+```
+
+---
+
+# Step 2 — Deploy AWS Infrastructure (AMP, IAM)
+
+```bash
+cd infra-cloud/hybrid-aws/terraform/aws
+terraform init
+terraform apply
+```
+
+This creates:
+- AMP workspace
+- IAM permissions
+- Remote state outputs
+
+---
+
+# Step 3 — Deploy Monitoring Stack (Local Cluster)
+
+```bash
+cd infra-cloud/hybrid-aws/terraform/k8s
+terraform init
+terraform apply
+```
+
+If needed during first run:
+
+```bash
+terraform apply
+```
+
+(Second apply ensures secrets are fully wired before pod restart.)
+
+This creates:
+- `monitoring` namespace
+- Kubernetes secret with AWS credentials
+- OpenTelemetry Collector (Helm)
+
+---
+
+# Step 4 — Deploy Local Application
+
+```bash
+./deploy-local-app.sh
+```
+
+This deploys the sample application that exposes metrics.
+
+---
+
+# Verify Metrics
+
+Check OpenTelemetry logs:
+
+```bash
+kubectl logs -n monitoring deploy/otel-opentelemetry-collector-agent
+```
+
+You should NOT see:
+
+```
+context deadline exceeded
+```
+
+Metrics should appear in Amazon Managed Prometheus.
+
+---
+
+# Notes
+
+- Do NOT base64 encode values in Terraform Kubernetes secrets (provider handles encoding).
+- Ensure AWS credentials are valid.
+- Verify:
+  - Secret values
+  - AMP workspace ID
+  - AWS region matches AMP region
+
+---
+
+# Cleanup
+
+To destroy resources:
+
+```bash
+cd infra-cloud/hybrid-aws/terraform/k8s
+terraform destroy
+
+cd ../aws
+terraform destroy
+```

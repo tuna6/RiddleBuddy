@@ -52,14 +52,11 @@ chmod +x deploy-local-full.sh
 # Access grafana: http://localhost:3000
 ```
 
-## Quick Start (Local + aws monitoring)
-```bash
-# Clone repo
-export DEEPSEEK_API_KEY=xxxx
-git clone https://github.com/yourusername/riddlebuddy.git
-chmod +x deploy-local.sh
-./deploy-local.sh
+## Hybrid AWS Terraform Setup
 
+See detailed setup guide:
+
+[Hybrid AWS Terraform README](infra-cloud/hybrid-aws/README.md)
 
 
 ## Why this project?
