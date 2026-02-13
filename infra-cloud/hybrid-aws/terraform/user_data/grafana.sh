@@ -14,14 +14,26 @@ gpgcheck=1
 gpgkey=https://rpm.grafana.com/gpg.key
 REPO
 
+# Install Grafana
 dnf install -y grafana
 
+# Install AMP plugin BEFORE starting service
+grafana-cli plugins install grafana-amazonprometheus-datasource
+
+# Create provisioning directory
 mkdir -p /etc/grafana/provisioning/datasources
 
+# Write datasource config
 cat <<'DATASOURCE' >/etc/grafana/provisioning/datasources/amp.yaml
-__AMP_DATASOURCE__
+${amp_datasource}
 DATASOURCE
 
+# Write datasource config
+cat <<'DASHBOARD' >/etc/grafana/provisioning/dashboards/riddlebuddy.yaml
+${amp_dashboard}
+DASHBOARD
+
+# Enable + Start Grafana
 systemctl daemon-reload
 systemctl enable grafana-server
 systemctl start grafana-server

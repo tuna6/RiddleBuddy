@@ -2,9 +2,9 @@ apiVersion: 1
 
 datasources:
   - name: AMP
-    type: prometheus
+    type: grafana-amazonprometheus-datasource
     access: proxy
-    url: https://aps-workspaces.${aws_region}.amazonaws.com/workspaces/${amp_workspace_id}/api/v1
+    url: https://aps-workspaces.${aws_region}.amazonaws.com/workspaces/${amp_workspace_id}/
     isDefault: true
     jsonData:
       sigV4Auth: true
