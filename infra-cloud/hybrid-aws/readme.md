@@ -53,13 +53,14 @@ Infrastructure managed via Terraform:
 ---
 
 # Prerequisites
-
+- Deepseek API Key
 - AWS account
 - AWS credentials exported:
 
 ```bash
-export AWS_ACCESS_KEY_ID=your_access_key
-export AWS_SECRET_ACCESS_KEY=your_secret_key
+export TF_VAR_aws_access_key=your_access_key
+export TF_VAR_aws_secret_key=your_secret_key
+export DEEPSEEK_API_KEY=your_api_key
 ```
 
 - `kubectl` configured to your local cluster

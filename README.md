@@ -56,7 +56,7 @@ chmod +x deploy-local-full.sh
 
 See detailed setup guide:
 
-[Hybrid AWS Terraform README](infra-cloud/hybrid-aws/README.md)
+[Hybrid AWS Terraform README](infra-cloud/hybrid-aws/readme.md)
 
 
 ## Why this project?
