@@ -5,7 +5,7 @@ COPY . .
 RUN gradle build -x test
 
 # ---------- runtime stage ----------
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 
