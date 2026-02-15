@@ -16,3 +16,12 @@ output "grafana_url" {
 output "amp_workspace_id" {
   value = aws_prometheus_workspace.this.id
 }
+
+output "vpc_id" {
+  value = aws_vpc.this.id
+}
+
+output "public_subnet_ids" {
+  description = "Public subnet IDs"
+  value       = aws_subnet.public.id
+}
