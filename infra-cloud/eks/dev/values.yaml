@@ -1,0 +1,162 @@
+mode: daemonset
+image:
+  repository: otel/opentelemetry-collector-contrib
+config:
+  receivers:
+    prometheus:
+      config:
+        global:
+          scrape_interval: 30s
+          scrape_timeout: 10s
+        scrape_configs:
+          # Your app jobs — with cluster label
+          - job_name: "riddlebuddy-api"
+            scrape_interval: 30s
+            metrics_path: /metrics
+            kubernetes_sd_configs:
+              - role: service
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_namespace]
+                action: keep
+                regex: riddlebuddy
+              - source_labels: [__meta_kubernetes_service_name]
+                action: keep
+                regex: riddlebuddy-api-service
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"  # ← CHANGE TO YOUR ACTUAL CLUSTER NAME
+
+          - job_name: "riddlebuddy-feedback"
+            scrape_interval: 30s
+            metrics_path: /actuator/prometheus
+            kubernetes_sd_configs:
+              - role: service
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_namespace]
+                action: keep
+                regex: riddlebuddy
+              - source_labels: [__meta_kubernetes_service_name]
+                action: keep
+                regex: riddlebuddy-feedback-service
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"
+
+          # kube-state-metrics
+          - job_name: kube-state-metrics
+            kubernetes_sd_configs:
+              - role: service
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_namespace]
+                action: keep
+                regex: kube-system
+              - source_labels: [__meta_kubernetes_service_name]
+                action: keep
+                regex: kube-state-metrics
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"
+
+          # Kubernetes API servers
+          - job_name: kubernetes-apiservers
+            scheme: https
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: true
+            bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            kubernetes_sd_configs:
+              - role: endpoints
+            relabel_configs:
+              - action: keep
+                regex: default;kubernetes;https
+                source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"
+
+          # Kubelet metrics (/metrics)
+          - job_name: kubernetes-nodes
+            scheme: https
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: true
+            bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            kubernetes_sd_configs:
+              - role: node
+            relabel_configs:
+              - action: labelmap
+                regex: __meta_kubernetes_node_label_(.+)
+              - replacement: kubernetes.default.svc:443
+                target_label: __address__
+              - regex: (.+)
+                replacement: /api/v1/nodes/$1/proxy/metrics
+                source_labels: [__meta_kubernetes_node_name]
+                target_label: __metrics_path__
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"
+
+          # cAdvisor container metrics (/metrics/cadvisor) — this gives pod/container CPU, memory, fs, etc.
+          - job_name: kubernetes-nodes-cadvisor
+            scheme: https
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: true
+            bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            kubernetes_sd_configs:
+              - role: node
+            relabel_configs:
+              - action: labelmap
+                regex: __meta_kubernetes_node_label_(.+)
+              - replacement: kubernetes.default.svc:443
+                target_label: __address__
+              - regex: (.+)
+                replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+                source_labels: [__meta_kubernetes_node_name]
+                target_label: __metrics_path__
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"
+
+          # Optional: annotated pods auto-discovery
+          - job_name: kubernetes-pods
+            kubernetes_sd_configs:
+              - role: pod
+            relabel_configs:
+              - action: keep
+                regex: true
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              - action: replace
+                regex: (https?)
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+                target_label: __scheme__
+              - action: replace
+                regex: (.+)
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                target_label: __metrics_path__
+              - action: replace
+                regex: ([^:]+)(?::\d+)?;(\d+)
+                replacement: $1:$2
+                source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                target_label: __address__
+              - action: labelmap
+                regex: __meta_kubernetes_pod_label_(.+)
+              - target_label: cluster
+                replacement: "riddlebuddy-cluster"
+
+  exporters:
+    prometheusremotewrite:
+      resource_to_telemetry_conversion:
+        enabled: true
+      auth:
+        authenticator: sigv4auth
+    prometheus:
+      endpoint: "0.0.0.0:8889"
+  extensions:
+    health_check:
+      endpoint: 0.0.0.0:13133
+    sigv4auth:
+      service: aps
+  service:
+    extensions: [health_check, sigv4auth]
+    telemetry:
+      logs:
+        level: debug
+    pipelines:
+      metrics:
+        receivers: [prometheus]
+        exporters: [prometheus, prometheusremotewrite]
