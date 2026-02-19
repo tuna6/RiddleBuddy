@@ -15,6 +15,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-feedback
         image: "{{ .Values.feedback.image.repository }}:{{ .Values.feedback.image.tag }}"
+        resources: {{- toYaml .Values.feedback.resources | nindent 12 }}
         imagePullPolicy: Always 
         ports:
         - containerPort: {{ .Values.feedback.port }}
@@ -23,3 +24,5 @@ spec:
           value: {{ .Release.Name }}-redis-service
         - name: REDIS_PORT
           value: {{ .Values.redis.port | quote }}
+        - name: JAVA_OPTS
+          value: "-Xms256m -Xmx400m"

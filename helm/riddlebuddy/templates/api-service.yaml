@@ -8,11 +8,10 @@ metadata:
     prometheus.io/port: "8000"
 
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: {{ .Release.Name }}-api
   ports:
   - protocol: TCP
     port: {{.Values.api.port}}
     targetPort: {{.Values.api.port}}
-    nodePort: {{.Values.api.nodePort}}

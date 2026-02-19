@@ -3,7 +3,7 @@ module "eks" {
   version = "~> 20.31"
 
   cluster_name               = "riddlebuddy-eks"
-  cluster_version = "1.32"        
+  cluster_version = "1.33"        
 
   vpc_id     = data.terraform_remote_state.network.outputs.vpc_id
   subnet_ids = data.terraform_remote_state.network.outputs.public_subnet_ids
@@ -13,7 +13,7 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
   enable_irsa = true
   node_security_group_additional_rules = {
-    # ✅ Control plane → Nodes (your existing rule)
+    # ✅ Control plane → Nodes
     ingress_cluster_to_node = {
       description                   = "Allow cluster control plane to nodes"
       protocol                      = "tcp"
@@ -35,7 +35,7 @@ module "eks" {
   }
   eks_managed_node_groups = {
     default = {
-      instance_types = ["t3.medium"]
+      instance_types = ["t3.small"]
       min_size       = 2
       max_size       = 2
       desired_size   = 2
@@ -48,5 +48,5 @@ resource "kubernetes_namespace" "monitoring" {
     name = "monitoring"
   }
 
-  depends_on = [module.eks]   # Helps avoid race conditions
+  depends_on = [module.eks]
 }

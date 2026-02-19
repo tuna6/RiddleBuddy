@@ -18,6 +18,7 @@ spec:
       - name: {{ .Release.Name }}-api
         image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
         imagePullPolicy: Always
+        resources: {{- toYaml .Values.api.resources | nindent 12 }}
         ports:
         - containerPort: {{ .Values.api.port }}
         env:

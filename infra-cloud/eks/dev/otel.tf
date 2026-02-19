@@ -41,7 +41,8 @@ resource "helm_release" "otel" {
   depends_on = [
     module.eks,
     kubernetes_namespace.monitoring,
-    aws_iam_role.otel_irsa_role
+    aws_iam_role.otel_irsa_role,
+    kubernetes_cluster_role_binding.otel
   ]
 }
 
