@@ -1,0 +1,29 @@
+Expose grafana to custom domain solutions:
+
+---install certbot
+sudo pip3 install --upgrade jmespath boto3 botocore certbot-dns-route53
+sudo pip3 install certbot-dns-route53
+sudo apt install python3-jmespath python3-boto3 -y  
+
+---Generate a free cert using certbot & letsencrypt (require sudo)
+sudo -E certbot certonly \
+  --dns-route53 \
+  -d grafana.nguyentu.online \
+  --email nguyen_tu@outlook.com \
+  --agree-tos \
+  --non-interactive \
+  --preferred-challenges dns
+
+---Upload to SSM parameter store (require sudo, and -E is for keeping current environment variable)
+sudo -E aws ssm put-parameter \
+  --name "/grafana/tls/cert" \
+  --value "$(sudo cat /etc/letsencrypt/live/grafana.nguyentu.online/fullchain.pem)" \
+  --type SecureString --overwrite
+
+sudo -E aws ssm put-parameter \
+  --name "/grafana/tls/key" \
+  --value "$(sudo cat /etc/letsencrypt/live/grafana.nguyentu.online/privkey.pem)" \
+  --type SecureString --overwrite
+
+
+=> Add permission to grafana EC2 to read SSM parameter store

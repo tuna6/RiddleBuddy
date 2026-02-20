@@ -1,3 +1,8 @@
+data "aws_route53_zone" "main" {
+  name         = "nguyentu.online."          
+  private_zone = false
+}
+
 resource "aws_security_group" "grafana_sg" {
   name        = "riddlebuddy-grafana-sg"
   description = "Allow SSH and Grafana access"
@@ -65,6 +70,7 @@ resource "aws_instance" "grafana" {
   user_data = templatefile("${path.module}/user_data/grafana.sh", {
     amp_datasource = local.amp_datasource
     dashboard_bucket = aws_s3_bucket.grafana_dashboards.bucket
+    hosted_zone_id = data.aws_route53_zone.main.zone_id
   })
 
   tags = {

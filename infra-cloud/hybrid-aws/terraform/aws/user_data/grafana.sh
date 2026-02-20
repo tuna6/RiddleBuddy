@@ -52,7 +52,82 @@ providers:
       path: /var/lib/grafana/dashboards
 EOF
 
+# Set Grafana public URL
+sed -i 's|;domain = localhost|domain = grafana.nguyentu.online|' /etc/grafana/grafana.ini
+sed -i 's|;root_url = %(protocol)s://%(domain)s:%(http_port)s/|root_url = https://grafana.nguyentu.online/|' /etc/grafana/grafana.ini
+
 # Enable + Start Grafana
 systemctl daemon-reload
 systemctl enable grafana-server
 systemctl start grafana-server
+
+# ─── Nginx reverse proxy + TLS ───────────────────────────────────────────────
+
+dnf install -y nginx python3-pip
+
+# Pull TLS cert and key from SSM Parameter Store
+mkdir -p /etc/nginx/tls
+
+aws ssm get-parameter \
+  --name "/grafana/tls/cert" \
+  --with-decryption \
+  --query Parameter.Value \
+  --output text > /etc/nginx/tls/cert.pem
+
+aws ssm get-parameter \
+  --name "/grafana/tls/key" \
+  --with-decryption \
+  --query Parameter.Value \
+  --output text > /etc/nginx/tls/key.pem
+
+chmod 600 /etc/nginx/tls/key.pem
+
+# Write Nginx config with SSL
+cat <<'NGINX_SSL' >/etc/nginx/conf.d/grafana.conf
+server {
+    listen 80;
+    server_name grafana.nguyentu.online;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name grafana.nguyentu.online;
+
+    ssl_certificate     /etc/nginx/tls/cert.pem;
+    ssl_certificate_key /etc/nginx/tls/key.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass         http://localhost:3000;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+}
+NGINX_SSL
+
+# Enable + start Nginx
+systemctl enable nginx
+systemctl start nginx
+
+# ─── Auto-update Route 53 A record with this instance's public IP ────────────
+
+PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+HOSTED_ZONE_ID="${hosted_zone_id}"
+
+aws route53 change-resource-record-sets \
+  --hosted-zone-id "$HOSTED_ZONE_ID" \
+  --change-batch "{
+    \"Changes\": [{
+      \"Action\": \"UPSERT\",
+      \"ResourceRecordSet\": {
+        \"Name\": \"grafana.nguyentu.online\",
+        \"Type\": \"A\",
+        \"TTL\": 60,
+        \"ResourceRecords\": [{\"Value\": \"$PUBLIC_IP\"}]
+      }
+    }]
+  }"
