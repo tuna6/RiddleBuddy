@@ -7,6 +7,7 @@ See `infra-cloud/` for Terraform configs.
 - Deepseek API Key
 - AWS account
 - AWS credentials exported:
+- ECR hosted docker images in your prefered region
 
 ```bash
 export TF_VAR_aws_access_key=your_access_key
@@ -21,7 +22,7 @@ export DEEPSEEK_API_KEY=your_api_key
 ---
 
 
-# Step 1 — Configure Terraform Backend (Required)
+# Step 1 — Preparation
 You'll need to update these values for your own environment:
 
 | Variable | Where | Description |
@@ -63,7 +64,7 @@ terraform apply
 
 ---
 
-# Step 3 — Deploy AWS Infrastructure (AMP, IAM)
+# Step 3 — Deploy AWS Infrastructure (AMP, IAM, EKS)
 
 ```bash
 ./deploy-aws-env.sh
