@@ -1,6 +1,6 @@
 api:
   image:
-    repository: 906171432460.dkr.ecr.ap-southeast-1.amazonaws.com/riddlebuddy
+    repository: 123456.dkr.ecr.ap-southeast-1.amazonaws.com/riddlebuddy
     tag: latest
   replicas: 1
   port: 8000
@@ -14,7 +14,7 @@ api:
 
 feedback:
   image:
-    repository: 906171432460.dkr.ecr.ap-southeast-1.amazonaws.com/riddlebuddy/riddlebuddy-feedback
+    repository: 123456.dkr.ecr.ap-southeast-1.amazonaws.com/riddlebuddy/riddlebuddy-feedback
     tag: latest
   replicas: 1
   port: 8080

@@ -83,3 +83,31 @@ resource "aws_iam_role_policy" "grafana_s3" {
     ]
   })
 }
+resource "aws_iam_policy" "route53_update" {
+  name        = "${var.project_name}-route53-update"
+  description = "Allow Grafana EC2 to update Route53 A record on boot"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ListHostedZones",
+          "route53:GetChange"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["route53:ChangeResourceRecordSets"]
+        Resource = "arn:aws:route53:::hostedzone/${data.aws_route53_zone.main.zone_id}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "grafana_route53" {
+  role       = aws_iam_role.grafana.name
+  policy_arn = aws_iam_policy.route53_update.arn
+}

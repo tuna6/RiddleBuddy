@@ -54,6 +54,7 @@ EOF
 
 # Set Grafana public URL
 sed -i 's|;domain = localhost|domain = grafana.nguyentu.online|' /etc/grafana/grafana.ini
+sed -i 's|;admin_password = admin|admin_password = ${grafana_admin_password}|' /etc/grafana/grafana.ini
 sed -i 's|;root_url = %(protocol)s://%(domain)s:%(http_port)s/|root_url = https://grafana.nguyentu.online/|' /etc/grafana/grafana.ini
 
 # Enable + Start Grafana
@@ -114,8 +115,11 @@ systemctl enable nginx
 systemctl start nginx
 
 # ─── Auto-update Route 53 A record with this instance's public IP ────────────
-
-PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+# Amazon Linux 2023 uses IMDSv2 by default which requires a token
+TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/public-ipv4)
 HOSTED_ZONE_ID="${hosted_zone_id}"
 
 aws route53 change-resource-record-sets \

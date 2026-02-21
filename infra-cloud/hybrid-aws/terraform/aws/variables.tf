@@ -49,3 +49,9 @@ variable "instance_type" {
 variable "key_name" {
   description = "EC2 SSH key pair name"
 }
+# variables.tf
+variable "grafana_admin_password" {
+  description = "Grafana admin password"
+  type        = string
+  sensitive   = true
+}

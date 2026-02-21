@@ -24,6 +24,20 @@ resource "aws_security_group" "grafana_sg" {
     cidr_blocks = [var.allowed_ip]
   }
 
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -71,6 +85,8 @@ resource "aws_instance" "grafana" {
     amp_datasource = local.amp_datasource
     dashboard_bucket = aws_s3_bucket.grafana_dashboards.bucket
     hosted_zone_id = data.aws_route53_zone.main.zone_id
+    grafana_admin_password  = var.grafana_admin_password
+
   })
 
   tags = {
