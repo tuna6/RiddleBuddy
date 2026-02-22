@@ -10,8 +10,7 @@ HOSTED_ZONE_ID="${HOSTED_ZONE_ID:-}"      # e.g. Z0123456789ABC
 DOMAIN="${DOMAIN:-riddlebuddy.nguyentu.online}"
 AWS_REGION="ap-southeast-1"
 EKS_CLUSTER="riddlebuddy-eks"
-# ALB hosted zone ID for ap-southeast-1 (fixed by AWS — used for ALIAS records)
-ALB_HOSTED_ZONE_ID="Z1LMS91P8CMLE5"
+ACM_CERT_ARN="${ACM_CERT_ARN:-}"  # e.g. arn:aws:acm:ap-southeast-1:123456789012:certificate/abcdefg-1234-5678-abcd-1234567890ab
 
 # ─────────────────────────────────────────────
 # 1. PREFLIGHT CHECKS
@@ -35,7 +34,18 @@ kubectl create namespace $NAMESPACE_APP     --dry-run=client -o yaml | kubectl a
 kubectl create namespace $NAMESPACE_INGRESS --dry-run=client -o yaml | kubectl apply -f -
 
 # ─────────────────────────────────────────────
-# 3. NGINX INGRESS CONTROLLER
+# 3. DEPLOY kube-state-metrics
+# ─────────────────────────────────────────────
+echo ""
+echo "🚀 Deploying kube-state-metrics..."
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm upgrade --install kube-state-metrics prometheus-community/kube-state-metrics \
+  -n kube-system \
+  --wait --timeout=5m
+echo "✅ kube-state-metrics deployed"
+# ─────────────────────────────────────────────
+# 4. NGINX INGRESS CONTROLLER
 # ─────────────────────────────────────────────
 echo ""
 echo "🌐 Installing NGINX Ingress Controller..."
@@ -44,29 +54,30 @@ helm repo update
 
 helm upgrade --install $RELEASE_INGRESS ingress-nginx/ingress-nginx \
   -n $NAMESPACE_INGRESS \
-  --set controller.service.type=LoadBalancer \
-  --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="nlb" \
-  --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing" \
-  --set controller.ingressClassResource.default=true \
+  -f helm/riddlebuddy/ingress-nginx-values.yaml \
+  --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-cert"="$ACM_CERT_ARN" \
   --wait --timeout=5m
 
 echo "✅ NGINX Ingress Controller deployed"
 
 # ─────────────────────────────────────────────
-# 4. DEPLOY RIDDLEBUDDY
+# 5. DEPLOY RIDDLEBUDDY
 # ─────────────────────────────────────────────
 echo ""
 echo "🚀 Deploying RiddleBuddy..."
 helm upgrade --install $RELEASE_APP \
   ./helm/riddlebuddy \
   -n $NAMESPACE_APP \
-  --set secrets.deepseekApiKey="$DEEPSEEK_API_KEY" \
+  -f ./helm/riddlebuddy/values-prod.yaml \
+  --set api.image.repository="${ECR_REGISTRY}/riddlebuddy-api" \
+  --set feedback.image.repository="${ECR_REGISTRY}/riddlebuddy-feedback" \
+  --set secrets.deepseekApiKey="${DEEPSEEK_API_KEY}" \
   --wait --timeout=5m
 
 echo "✅ RiddleBuddy deployed"
 
 # ─────────────────────────────────────────────
-# 5. GET LOAD BALANCER HOSTNAME
+# 6. GET LOAD BALANCER HOSTNAME
 # ─────────────────────────────────────────────
 echo ""
 echo "⏳ Waiting for NLB hostname (can take 2-3 min)..."
@@ -88,11 +99,13 @@ fi
 echo "✅ NLB hostname: $LB_HOST"
 
 # ─────────────────────────────────────────────
-# 6. UPDATE ROUTE53
+# 7. UPDATE ROUTE53
 # ─────────────────────────────────────────────
 echo ""
 echo "📡 Updating Route53: $DOMAIN → $LB_HOST"
-
+ALB_HOSTED_ZONE_ID=$(aws elbv2 describe-load-balancers \
+  --query "LoadBalancers[?DNSName=='${LB_HOST}'].CanonicalHostedZoneId" \
+  --output text)
 CHANGE_ID=$(aws route53 change-resource-record-sets \
   --hosted-zone-id "$HOSTED_ZONE_ID" \
   --change-batch "{

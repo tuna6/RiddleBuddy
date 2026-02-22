@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: riddlebuddy-ingress
   namespace: riddlebuddy
+  annotations:
+    nginx.ingress.kubernetes.io/app-root: /static
 spec:
   ingressClassName: nginx
   rules:

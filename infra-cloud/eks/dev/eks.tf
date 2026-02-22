@@ -32,6 +32,14 @@ module "eks" {
       type        = "egress"
       cidr_blocks = ["0.0.0.0/0"]
     }
+    ingress_nlb_http = {
+      description = "Allow NLB to nodes on port 80"
+      protocol    = "tcp"
+      from_port   = 80
+      to_port     = 80
+      type        = "ingress"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   }
   eks_managed_node_groups = {
     default = {
