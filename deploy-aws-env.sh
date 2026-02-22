@@ -9,12 +9,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # ─────────────────────────────────────────────
 # 1. PREFLIGHT CHECKS
 # ─────────────────────────────────────────────
-echo ""
 echo "🔎 Checking required environment variables..."
-if [ -z "${DEEPSEEK_API_KEY:-}" ]; then
-  echo "❌ DEEPSEEK_API_KEY is not set"
-  exit 1
-fi
+[[ -z "${DEEPSEEK_API_KEY:-}" ]] && { echo "❌ DEEPSEEK_API_KEY is not set"; exit 1; }
+[[ -z "$HOSTED_ZONE_ID" ]]      && { echo "❌ HOSTED_ZONE_ID is not set";    exit 1; }
 echo "✅ Environment OK"
 
 # ─────────────────────────────────────────────
