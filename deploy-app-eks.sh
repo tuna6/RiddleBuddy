@@ -68,7 +68,6 @@ echo "🚀 Deploying RiddleBuddy..."
 helm upgrade --install $RELEASE_APP \
   ./helm/riddlebuddy \
   -n $NAMESPACE_APP \
-  -f ./helm/riddlebuddy/values-prod.yaml \
   --set api.image.repository="${ECR_REGISTRY}/riddlebuddy-api" \
   --set feedback.image.repository="${ECR_REGISTRY}/riddlebuddy-feedback" \
   --set secrets.deepseekApiKey="${DEEPSEEK_API_KEY}" \
