@@ -830,7 +830,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{container=\"\", container!=\"POD\"}) by (instance)",
+          "expr": "sum(container_memory_working_set_bytes{container!=\"\", container!=\"POD\"}) by (instance)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"

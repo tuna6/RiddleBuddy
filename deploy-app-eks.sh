@@ -68,7 +68,7 @@ echo "🚀 Deploying RiddleBuddy..."
 helm upgrade --install $RELEASE_APP \
   ./helm/riddlebuddy \
   -n $NAMESPACE_APP \
-  --set api.image.repository="${ECR_REGISTRY}/riddlebuddy-api" \
+  --set api.image.repository="${ECR_REGISTRY}/riddlebuddy" \
   --set feedback.image.repository="${ECR_REGISTRY}/riddlebuddy-feedback" \
   --set secrets.deepseekApiKey="${DEEPSEEK_API_KEY}" \
   --wait --timeout=5m
