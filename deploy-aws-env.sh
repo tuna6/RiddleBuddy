@@ -1,8 +1,9 @@
 #!/bin/bash
 set -euo pipefail
+export TF_IN_AUTOMATION=true
 
 ROOT_DIR=$(pwd)
-
+GRAFANA_ADMIN_PASSWORD="${GRAFANA_ADMIN_PASSWORD:-admin}"
 echo "🚀 RiddleBuddy Full Stack Startup"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
@@ -22,7 +23,12 @@ echo ""
 echo "🌍 Provisioning network + monitoring stack..."
 cd "$ROOT_DIR/infra-cloud/hybrid-aws/terraform/aws"
 terraform init
-terraform apply -auto-approve
+terraform apply -auto-approve \
+  -var="allowed_ip=0.0.0.0/0" \
+  -var="project_name=riddlebuddy-hybrid" \
+  -var="region=ap-southeast-1" \
+  -var="key_name=riddlebuddy-monitoring-key" \
+  -var="grafana_admin_password=$GRAFANA_ADMIN_PASSWORD"
 echo "✅ Network + monitoring stack provisioned"
 
 # ─────────────────────────────────────────────
