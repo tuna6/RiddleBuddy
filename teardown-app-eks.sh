@@ -9,6 +9,7 @@ HOSTED_ZONE_ID="${HOSTED_ZONE_ID:-}"
 DOMAIN="${DOMAIN:-riddlebuddy.nguyentu.online}"
 CLOUDFRONT_DOMAIN="d3ttg4n9hc3nat.cloudfront.net"
 CLOUDFRONT_HOSTED_ZONE_ID="Z2FDTNDATAQYW2"   # fixed AWS value for all CloudFront distributions
+GRAFANA_ADMIN_PASSWORD="${GRAFANA_ADMIN_PASSWORD:-}"
 
 echo "⚠️  WARNING: This will destroy the NLB and ALL infrastructure."
 if [[ -z "${CI:-}" ]]; then
