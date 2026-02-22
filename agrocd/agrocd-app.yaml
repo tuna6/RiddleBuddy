@@ -17,3 +17,9 @@ spec:
     automated:
       prune: true
       selfHeal: true
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: deepseek-secret      # ← ArgoCD won't touch this secret
+      jsonPointers:
+        - /data

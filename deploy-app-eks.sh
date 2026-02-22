@@ -76,7 +76,26 @@ helm upgrade --install $RELEASE_APP \
 echo "✅ RiddleBuddy deployed"
 
 # ─────────────────────────────────────────────
-# 6. GET LOAD BALANCER HOSTNAME
+# 6. INSTALL ARGOCD
+# ─────────────────────────────────────────────
+echo ""
+echo "🚀 Installing ArgoCD..."
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -n argocd \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml \
+  --server-side
+
+echo "⏳ Waiting for ArgoCD to be ready..."
+kubectl wait --for=condition=available deployment/argocd-server \
+  -n argocd --timeout=120s
+
+echo "📋 Applying ArgoCD app and ingress..."
+kubectl apply -f argocd/argocd-app.yaml
+kubectl apply -f argocd/argocd-ingress.yaml
+echo "✅ ArgoCD installed"
+
+# ─────────────────────────────────────────────
+# 7. GET LOAD BALANCER HOSTNAME
 # ─────────────────────────────────────────────
 echo ""
 echo "⏳ Waiting for NLB hostname (can take 2-3 min)..."
@@ -123,10 +142,28 @@ CHANGE_ID=$(aws route53 change-resource-record-sets \
     }]
   }" \
   --query 'ChangeInfo.Id' --output text)
+echo "✅ Route53 updated"
 
+echo "📡 Updating Route53: argocd.nguyentu.online → $LB_HOST"
+aws route53 change-resource-record-sets \
+  --hosted-zone-id "$HOSTED_ZONE_ID" \
+  --change-batch "{
+    \"Changes\": [{
+      \"Action\": \"UPSERT\",
+      \"ResourceRecordSet\": {
+        \"Name\": \"argocd.nguyentu.online\",
+        \"Type\": \"A\",
+        \"AliasTarget\": {
+          \"HostedZoneId\": \"$ALB_HOSTED_ZONE_ID\",
+          \"DNSName\": \"$LB_HOST\",
+          \"EvaluateTargetHealth\": true
+        }
+      }
+    }]
+  }"
+echo "✅ ArgoCD Route53 updated"
 echo "⏳ Waiting for Route53 propagation..."
 aws route53 wait resource-record-sets-changed --id "$CHANGE_ID"
-echo "✅ Route53 updated"
 
 # ─────────────────────────────────────────────
 # DONE
