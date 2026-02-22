@@ -8,6 +8,9 @@ on:
     paths:
       - 'services/**'
 
+permissions:
+  contents: write    # ← allows git push back to repo
+
 jobs:
     build-and-push:
         runs-on: ubuntu-latest
@@ -32,7 +35,6 @@ jobs:
               context: ./services/api
               push: true
               tags: |
-                ${{ secrets.ECR_REGISTRY }}/riddlebuddy:latest
                 ${{ secrets.ECR_REGISTRY }}/riddlebuddy:${{ github.sha }}
 
           - name: Build and push Feedback image
@@ -41,6 +43,22 @@ jobs:
               context: ./services/feedback-service
               push: true
               tags: |
-                ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:latest
                 ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:${{ github.sha }}
 
+          - name: Update image tags in values.yaml
+            run: |
+              # install yq
+              wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+              chmod +x /usr/local/bin/yq
+              
+              # update both tags
+              yq e ".api.image.tag = \"${{ github.sha }}\"" -i helm/riddlebuddy/values.yaml
+              yq e ".feedback.image.tag = \"${{ github.sha }}\"" -i helm/riddlebuddy/values.yaml
+
+          - name: Commit and push
+            run: |
+              git config user.name "GitHub Actions"
+              git config user.email "ci@github.com"
+              git add helm/riddlebuddy/values.yaml
+              git commit -m "ci: update image tag to ${{ github.sha }}"
+              git push
