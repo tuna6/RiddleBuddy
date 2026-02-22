@@ -91,6 +91,7 @@ done
 echo ""
 echo "💣 Destroying EKS cluster..."
 cd "$ROOT_DIR/infra-cloud/eks/dev"
+terraform init
 terraform destroy -auto-approve
 echo "✅ EKS cluster destroyed"
 
@@ -100,6 +101,7 @@ echo "✅ EKS cluster destroyed"
 echo ""
 echo "💣 Destroying network + monitoring stack..."
 cd "$ROOT_DIR/infra-cloud/hybrid-aws/terraform/aws"
+terraform init
 terraform destroy -auto-approve
 echo "✅ Network + monitoring stack destroyed"
 
