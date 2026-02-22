@@ -34,7 +34,7 @@ echo "✅ CloudFront domain: $CLOUDFRONT_DOMAIN"
 # ─────────────────────────────────────────────
 echo ""
 echo "🔄 Switching kubectl context to EKS..."
-aws eks update-kubeconfig --region ap-southeast-1 --name riddlebuddy-eks
+aws eks update-kubeconfig --region ap-southeast-1 --name riddlebuddy-eks || true
 echo "✅ kubectl connected to: $(kubectl config current-context)"
 
 # ─────────────────────────────────────────────
