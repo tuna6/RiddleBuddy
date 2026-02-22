@@ -92,7 +92,7 @@ echo ""
 echo "💣 Destroying EKS cluster..."
 cd "$ROOT_DIR/infra-cloud/eks/dev"
 terraform init
-terraform destroy -auto-approve
+terraform destroy -auto-approve || true
 echo "✅ EKS cluster destroyed"
 
 # ─────────────────────────────────────────────
@@ -102,7 +102,7 @@ echo ""
 echo "💣 Destroying network + monitoring stack..."
 cd "$ROOT_DIR/infra-cloud/hybrid-aws/terraform/aws"
 terraform init
-terraform apply -auto-approve \
+terraform destroy -auto-approve \
   -var="allowed_ip=0.0.0.0/0" \
   -var="project_name=riddlebuddy-hybrid" \
   -var="region=ap-southeast-1" \
