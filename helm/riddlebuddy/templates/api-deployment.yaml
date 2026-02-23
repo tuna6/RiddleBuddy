@@ -29,3 +29,17 @@ spec:
               key: DEEPSEEK_API_KEY
         - name: FEEDBACK_SERVICE_URL
           value: "http://{{ .Release.Name }}-feedback-service:{{ .Values.feedback.port }}"
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.api.probes.liveness.path }}
+            port: {{ .Values.api.port }}
+          initialDelaySeconds: {{ .Values.api.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.api.probes.liveness.periodSeconds }}
+          failureThreshold: {{ .Values.api.probes.liveness.failureThreshold }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.api.probes.readiness.path }}
+            port: {{ .Values.api.port }}
+          initialDelaySeconds: {{ .Values.api.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.api.probes.readiness.periodSeconds }}
+          failureThreshold: {{ .Values.api.probes.readiness.failureThreshold }}

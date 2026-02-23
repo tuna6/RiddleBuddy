@@ -11,6 +11,18 @@ api:
     limits:
       memory: "512Mi"
       cpu: "500m"
+  probes:
+    liveness:
+      path: /health
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 3
+    readiness:
+      path: /health
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 3
+
 
 feedback:
   image:
@@ -25,6 +37,18 @@ feedback:
     limits:
       memory: "512Mi"
       cpu: "500m"
+  probes:
+    liveness:
+      path: /actuator/health/liveness
+      initialDelaySeconds: 30   # spring boot is slow
+      periodSeconds: 10
+      failureThreshold: 3
+    readiness:
+      path: /actuator/health/readiness
+      initialDelaySeconds: 20
+      periodSeconds: 5
+      failureThreshold: 3
+
 
 redis:
   image:

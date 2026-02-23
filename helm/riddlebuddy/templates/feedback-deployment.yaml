@@ -16,7 +16,7 @@ spec:
       - name: {{ .Release.Name }}-feedback
         image: "{{ .Values.feedback.image.repository }}:{{ .Values.feedback.image.tag }}"
         resources: {{- toYaml .Values.feedback.resources | nindent 12 }}
-        imagePullPolicy: Always 
+        imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.feedback.port }}
         env:
@@ -26,3 +26,17 @@ spec:
           value: {{ .Values.redis.port | quote }}
         - name: JAVA_OPTS
           value: "-Xms256m -Xmx400m"
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.feedback.probes.liveness.path }}
+            port: {{ .Values.feedback.port }}
+          initialDelaySeconds: {{ .Values.feedback.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.feedback.probes.liveness.periodSeconds }}
+          failureThreshold: {{ .Values.feedback.probes.liveness.failureThreshold }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.feedback.probes.readiness.path }}
+            port: {{ .Values.feedback.port }}
+          initialDelaySeconds: {{ .Values.feedback.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.feedback.probes.readiness.periodSeconds }}
+          failureThreshold: {{ .Values.feedback.probes.readiness.failureThreshold }}
