@@ -42,3 +42,8 @@ redis:
 
 secrets:
   deepseekApiKey: "YOUR_DEEPSEEK_API_KEY"
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPU: 70
