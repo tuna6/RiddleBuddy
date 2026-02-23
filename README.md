@@ -45,7 +45,7 @@ RiddleBuddy started as a simple joke app and evolved into a complete DevOps port
 | Containers | Kubernetes · Docker · Helm |
 | IaC | Terraform |
 | Observability | OpenTelemetry · Prometheus (AMP) · Grafana · Loki |
-| CI/CD | GitHub Actions |
+| CI/CD | GitHub Actions | ArgoCD
 | Backend | FastAPI (Python) · Java Spring |
 | Frontend | HTML · CSS · Vanilla JS |
 
@@ -89,7 +89,7 @@ chmod +x deploy-local-full.sh
 - **AWS EKS** — production-grade cluster with ALB ingress, NAT gateway, private subnets
 - **Observability** — end-to-end with OpenTelemetry: metrics → AMP, logs → Loki, traces → Grafana
 - **IaC** — full AWS infrastructure defined in Terraform
-- **CI/CD** — GitHub Actions pipeline with Docker build, push, and Helm deploy
+- **CI/CD** — GitHub Actions pipeline with Docker build, push, and Helm deploy. ArgoCD GitOps
 - **Security** — security groups, private subnet isolation, IRSA for pod-level AWS permissions
 
 ---

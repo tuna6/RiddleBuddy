@@ -124,7 +124,7 @@ resource "helm_release" "fluent_bit" {
   timeout       = 600
 
   values = [
-    file("${path.module}/fluent-bit-values-eks.yaml"),
+    file("${path.module}/fluentbit-values.yaml"),
   ]
 
   set {
