@@ -49,16 +49,23 @@ echo "✅ kube-state-metrics deployed"
 # ─────────────────────────────────────────────
 echo ""
 echo "🌐 Installing NGINX Ingress Controller..."
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx --force-update
-helm repo update
 
-helm upgrade --install $RELEASE_INGRESS ingress-nginx/ingress-nginx \
+
+if helm status ingress-nginx -n ingress-nginx &>/dev/null; then
+  echo "✅ ingress-nginx already installed, skipping..."
+else
+  helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx --force-update
+  helm repo update
+  helm upgrade --install $RELEASE_INGRESS ingress-nginx/ingress-nginx \
   -n $NAMESPACE_INGRESS \
   -f helm/riddlebuddy/ingress-nginx-values.yaml \
   --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-cert"="$ACM_CERT_ARN" \
   --wait --timeout=5m
 
-echo "✅ NGINX Ingress Controller deployed"
+  echo "✅ NGINX Ingress Controller deployed"
+fi
+
+
 
 # ─────────────────────────────────────────────
 # 5. DEPLOY RIDDLEBUDDY
