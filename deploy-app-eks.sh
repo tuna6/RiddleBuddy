@@ -88,6 +88,8 @@ echo "✅ RiddleBuddy deployed"
 echo ""
 echo "🚀 Installing ArgoCD..."
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f argocd/argocd-config.yaml
+
 kubectl apply -n argocd \
   -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml \
   --server-side
