@@ -41,10 +41,10 @@ RiddleBuddy started as a simple joke app and evolved into a complete DevOps port
 
 | Layer | Tools |
 |---|---|
-| Cloud | AWS (EKS, VPC, ALB, EC2, AMP) |
+| Cloud | AWS (EKS, VPC, ALB, EC2, AMP, Route53, ACM, CloudWatchLog) |
 | Containers | Kubernetes · Docker · Helm |
 | IaC | Terraform |
-| Observability | OpenTelemetry · Prometheus (AMP) · Grafana · Loki |
+| Observability | OpenTelemetry · Prometheus (AMP) · Grafana · Loki · Fluent-bit|
 | CI/CD | GitHub Actions | ArgoCD
 | Backend | FastAPI (Python) · Java Spring |
 | Frontend | HTML · CSS · Vanilla JS |
@@ -89,7 +89,8 @@ chmod +x deploy-local-full.sh
 - **AWS EKS** — production-grade cluster with ALB ingress, NAT gateway, private subnets
 - **Observability** — end-to-end with OpenTelemetry: metrics → AMP, logs → Loki, traces → Grafana
 - **IaC** — full AWS infrastructure defined in Terraform
-- **CI/CD** — GitHub Actions pipeline with Docker build, push, and Helm deploy. ArgoCD GitOps
+- **CI/CD** — GitHub Actions pipeline with Docker build, push.
+- **GitOps** - ArgoCD for auto sync & deploy, pod self heal.
 - **Security** — security groups, private subnet isolation, IRSA for pod-level AWS permissions
 
 ---
@@ -101,6 +102,7 @@ RiddleBuddy/
 ├── riddlebuddy-api/       # FastAPI service
 ├── riddlebuddy-feedback/  # Java Spring service
 ├── helm/                  # Helm charts
+├── argocd/                # Argocd config
 ├── infra-cloud/           # Terraform (hybrid + full AWS)
 ├── .github/workflows/     # CI/CD pipelines
 └── docs/                  # Deployment guides & diagrams
@@ -110,4 +112,4 @@ RiddleBuddy/
 
 ## License
 
-MIT — contributions, feedback, or roasts welcome. 😄
+Apache 2.0 — contributions, feedback, or roasts welcome. 😄
