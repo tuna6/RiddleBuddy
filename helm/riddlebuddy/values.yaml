@@ -1,7 +1,7 @@
 api:
   image:
     repository: tuna610/riddlebuddy
-    tag: latest
+    tag: 5c03c731ccf0e0a66403a84eb478bf2a28d2c538
   replicas: 1
   port: 8000
   resources:
@@ -22,8 +22,6 @@ api:
       initialDelaySeconds: 5
       periodSeconds: 5
       failureThreshold: 3
-
-
 feedback:
   image:
     repository: tuna610/riddlebuddy-feedback
@@ -40,7 +38,7 @@ feedback:
   probes:
     liveness:
       path: /actuator/health/liveness
-      initialDelaySeconds: 30   # spring boot is slow
+      initialDelaySeconds: 30 # spring boot is slow
       periodSeconds: 10
       failureThreshold: 3
     readiness:
@@ -48,8 +46,6 @@ feedback:
       initialDelaySeconds: 20
       periodSeconds: 5
       failureThreshold: 3
-
-
 redis:
   image:
     repository: redis
@@ -63,10 +59,8 @@ redis:
     limits:
       memory: "256Mi"
       cpu: "200m"
-
 secrets:
   deepseekApiKey: "YOUR_DEEPSEEK_API_KEY"
-
 hpa:
   minReplicas: 1
   maxReplicas: 3
