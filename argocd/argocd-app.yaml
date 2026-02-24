@@ -10,6 +10,12 @@ spec:
     repoURL: https://github.com/tuna6/RiddleBuddy
     targetRevision: HEAD
     path: helm/riddlebuddy
+    helm:
+      parameters:
+        - name: api.image.repository
+          value: 906171432460.dkr.ecr.ap-southeast-1.amazonaws.com/riddlebuddy
+        - name: feedback.image.repository
+          value: 906171432460.dkr.ecr.ap-southeast-1.amazonaws.com/riddlebuddy-feedback
   destination:
     server: https://kubernetes.default.svc
     namespace: riddlebuddy
