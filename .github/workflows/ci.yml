@@ -9,15 +9,33 @@ on:
       - 'services/**'
 
 permissions:
-  contents: write    # ← allows git push back to repo
+  contents: write
 
 jobs:
+    detect-changes:
+        runs-on: ubuntu-latest
+        outputs:
+          api: ${{ steps.filter.outputs.api }}
+          feedback: ${{ steps.filter.outputs.feedback }}
+        steps:
+          - uses: actions/checkout@v4
+          - uses: dorny/paths-filter@v3
+            id: filter
+            with:
+              filters: |
+                api:
+                  - 'services/api/**'
+                feedback:
+                  - 'services/feedback-service/**'
+
     build-and-push:
         runs-on: ubuntu-latest
-    
+        needs: detect-changes
         steps:
           - name: Checkout repository
             uses: actions/checkout@v4
+            with:
+              token: ${{ secrets.GITHUB_TOKEN }}
 
           - name: Configure AWS credentials
             uses: aws-actions/configure-aws-credentials@v4
@@ -30,35 +48,37 @@ jobs:
             uses: aws-actions/amazon-ecr-login@v2
 
           - name: Build and push API image
+            if: needs.detect-changes.outputs.api == 'true'
             uses: docker/build-push-action@v4
             with:
               context: ./services/api
               push: true
-              tags: |
-                ${{ secrets.ECR_REGISTRY }}/riddlebuddy:${{ github.sha }}
+              tags: ${{ secrets.ECR_REGISTRY }}/riddlebuddy:${{ github.sha }}
 
           - name: Build and push Feedback image
+            if: needs.detect-changes.outputs.feedback == 'true'
             uses: docker/build-push-action@v4
             with:
               context: ./services/feedback-service
               push: true
-              tags: |
-                ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:${{ github.sha }}
+              tags: ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:${{ github.sha }}
 
           - name: Update image tags in values.yaml
             run: |
-              # install yq
               wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
               chmod +x /usr/local/bin/yq
               
-              # update both tags
-              yq e ".api.image.tag = \"${{ github.sha }}\"" -i helm/riddlebuddy/values.yaml
-              yq e ".feedback.image.tag = \"${{ github.sha }}\"" -i helm/riddlebuddy/values.yaml
+              if [ "${{ needs.detect-changes.outputs.api }}" == "true" ]; then
+                yq e ".api.image.tag = \"${{ github.sha }}\"" -i helm/riddlebuddy/values.yaml
+              fi
+
+              if [ "${{ needs.detect-changes.outputs.feedback }}" == "true" ]; then
+                yq e ".feedback.image.tag = \"${{ github.sha }}\"" -i helm/riddlebuddy/values.yaml
+              fi
 
           - name: Commit and push
             run: |
               git config user.name "GitHub Actions"
               git config user.email "ci@github.com"
               git add helm/riddlebuddy/values.yaml
-              git commit -m "ci: update image tag to ${{ github.sha }}"
-              git push
+              git diff --staged --quiet || git commit -m "ci: update image tag to ${{ github.sha }}" && git push
