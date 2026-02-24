@@ -59,8 +59,6 @@ redis:
     limits:
       memory: "256Mi"
       cpu: "200m"
-secrets:
-  deepseekApiKey: "YOUR_DEEPSEEK_API_KEY"
 hpa:
   minReplicas: 1
   maxReplicas: 3

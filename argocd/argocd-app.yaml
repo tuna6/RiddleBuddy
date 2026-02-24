@@ -17,9 +17,11 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - RespectIgnoreDifferences=true 
   ignoreDifferences:
-    - group: ""
+    - group: "v1"
       kind: Secret
-      name: deepseek-secret      # ← ArgoCD won't touch this secret
+      name: deepseek-secret
       jsonPointers:
         - /data

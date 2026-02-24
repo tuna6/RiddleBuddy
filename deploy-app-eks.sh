@@ -72,12 +72,15 @@ fi
 # ─────────────────────────────────────────────
 echo ""
 echo "🚀 Deploying RiddleBuddy..."
+kubectl create secret generic deepseek-secret \
+  -n riddlebuddy \
+  --from-literal=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY" \
+  --dry-run=client -o yaml | kubectl apply -f -
 helm upgrade --install $RELEASE_APP \
   ./helm/riddlebuddy \
   -n $NAMESPACE_APP \
   --set api.image.repository="${ECR_REGISTRY}/riddlebuddy" \
   --set feedback.image.repository="${ECR_REGISTRY}/riddlebuddy-feedback" \
-  --set secrets.deepseekApiKey="${DEEPSEEK_API_KEY}" \
   --wait --timeout=5m
 
 echo "✅ RiddleBuddy deployed"
@@ -98,7 +101,7 @@ kubectl apply -f argocd/argocd-ingress.yaml
 echo "⏳ Waiting for ArgoCD to be ready..."
 kubectl wait --for=condition=available deployment/argocd-server \
   -n argocd --timeout=120s
-  
+
 kubectl rollout restart deployment argocd-server -n argocd
 
 echo "📋 Applying ArgoCD app and ingress..."
