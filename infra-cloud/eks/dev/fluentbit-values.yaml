@@ -100,7 +100,7 @@ config:
         Match                 kube.*
         region                ap-southeast-1
         log_group_name        /riddlebuddy/eks/app
-        log_stream_prefix     {k8s_namespace_name}-
+        log_stream_prefix     riddlebuddy-
         log_key               log_processed
         auto_create_group     true
         retry_limit           5
