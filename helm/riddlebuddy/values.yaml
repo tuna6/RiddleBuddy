@@ -1,7 +1,7 @@
 api:
   image:
     repository: tuna610/riddlebuddy
-    tag: fa7156869bfd3418d4521459659532714d2b02f6
+    tag: 67c1952c058934f08e6bbef2a7be042e204dc7dd
   replicas: 1
   port: 8000
   resources:
