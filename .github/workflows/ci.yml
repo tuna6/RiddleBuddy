@@ -27,6 +27,12 @@ jobs:
                   - 'services/api/**'
                 feedback:
                   - 'services/feedback-service/**'
+    helm-lint:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: Helm lint
+            run: helm lint ./helm/riddlebuddy
 
     build-and-push:
         runs-on: ubuntu-latest
@@ -47,22 +53,57 @@ jobs:
           - name: Login to ECR
             uses: aws-actions/amazon-ecr-login@v2
 
-          - name: Build and push API image
+          # ── API ──────────────────────────────────────────
+          - name: Build API image
             if: needs.detect-changes.outputs.api == 'true'
             uses: docker/build-push-action@v4
             with:
               context: ./services/api
-              push: true
-              tags: ${{ secrets.ECR_REGISTRY }}/riddlebuddy:${{ github.sha }}
+              push: false          # build locally first, scan before push
+              load: true
+              tags: riddlebuddy-api:ci
 
-          - name: Build and push Feedback image
+          - name: Scan API image
+            if: needs.detect-changes.outputs.api == 'true'
+            uses: aquasecurity/trivy-action@master
+            with:
+              image-ref: riddlebuddy-api:ci
+              severity: HIGH,CRITICAL
+              exit-code: '1'
+              ignore-unfixed: true
+
+          - name: Push API image
+            if: needs.detect-changes.outputs.api == 'true'
+            run: |
+              docker tag riddlebuddy-api:ci ${{ secrets.ECR_REGISTRY }}/riddlebuddy:${{ github.sha }}
+              docker push ${{ secrets.ECR_REGISTRY }}/riddlebuddy:${{ github.sha }}
+
+          # ── FEEDBACK ─────────────────────────────────────
+          - name: Build Feedback image
             if: needs.detect-changes.outputs.feedback == 'true'
             uses: docker/build-push-action@v4
             with:
               context: ./services/feedback-service
-              push: true
-              tags: ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:${{ github.sha }}
+              push: false
+              load: true
+              tags: riddlebuddy-feedback:ci
 
+          - name: Scan Feedback image
+            if: needs.detect-changes.outputs.feedback == 'true'
+            uses: aquasecurity/trivy-action@master
+            with:
+              image-ref: riddlebuddy-feedback:ci
+              severity: HIGH,CRITICAL
+              exit-code: '1'
+              ignore-unfixed: true
+
+          - name: Push Feedback image
+            if: needs.detect-changes.outputs.feedback == 'true'
+            run: |
+              docker tag riddlebuddy-feedback:ci ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:${{ github.sha }}
+              docker push ${{ secrets.ECR_REGISTRY }}/riddlebuddy-feedback:${{ github.sha }}
+
+          # ── HELM ─────────────────────────────────────────
           - name: Update image tags in values.yaml
             run: |
               wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
