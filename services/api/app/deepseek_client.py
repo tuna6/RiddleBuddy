@@ -8,17 +8,13 @@ DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 
 
 deepseek_requests_total = Counter(
-    "deepseek_requests_total",
-    "Total DeepSeek API calls",
-    ["status"]
+    "deepseek_requests_total", "Total DeepSeek API calls", ["status"]
 )
-deepseek_latency = Histogram(
-    "deepseek_latency_seconds",
-    "DeepSeek API latency"
-)
+deepseek_latency = Histogram("deepseek_latency_seconds", "DeepSeek API latency")
 
 if not DEEPSEEK_API_KEY:
     raise RuntimeError("DEEPSEEK_API_KEY not set")
+
 
 def generate_joke(category=None, joke_type=None):
     # Build a VERY strict, kid-safe prompt
@@ -51,22 +47,21 @@ def generate_joke(category=None, joke_type=None):
         "}\n"
     )
 
-
     payload = {
         "model": "deepseek-chat",
-        "messages": [
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.9
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.9,
     }
 
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     with deepseek_latency.time():
-        response = requests.post(DEEPSEEK_URL, json=payload, headers=headers, timeout=10)
+        response = requests.post(
+            DEEPSEEK_URL, json=payload, headers=headers, timeout=10
+        )
         response.raise_for_status()
 
     if response.status_code != 200:
@@ -83,6 +78,7 @@ def generate_joke(category=None, joke_type=None):
     content = content.strip()
     if content.startswith("```"):
         content = content.replace("```json", "").replace("```", "").strip()
-    return content;
-   # return content.replace("```json", "").replace("```", "").strip()
+    return content
 
+
+# return content.replace("```json", "").replace("```", "").strip()
