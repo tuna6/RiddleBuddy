@@ -40,3 +40,6 @@ override.tf.json
 
 # Lock file (KEEP this)
 # !.terraform.lock.hcl
+
+# local dev
+requirements-dev
