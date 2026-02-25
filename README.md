@@ -23,7 +23,6 @@ RiddleBuddy started as a simple joke app and evolved into a complete DevOps port
 
 > Full cloud architecture diagram: [nguyentu.online/#projects](https://nguyentu.online/#projects)
 
-<!-- Add screenshot of your architecture diagram here -->
 ![Architecture](docs/images/architecture.png)
 
 **Services:**
@@ -41,19 +40,44 @@ RiddleBuddy started as a simple joke app and evolved into a complete DevOps port
 
 | Layer | Tools |
 |---|---|
-| Cloud | AWS (EKS, VPC, ALB, EC2, AMP, Route53, ACM, CloudWatchLog) |
+| Cloud | AWS (EKS, VPC, ALB, EC2, AMP, Route53, ACM, CloudWatch Logs) |
 | Containers | Kubernetes · Docker · Helm |
 | IaC | Terraform |
-| Observability | OpenTelemetry · Prometheus (AMP) · Grafana · Loki · Fluent-bit|
-| CI/CD | GitHub Actions | ArgoCD
+| Observability | OpenTelemetry · Prometheus (AMP) · Grafana · Loki · Fluent-bit |
+| CI/CD | GitHub Actions · ArgoCD |
 | Backend | FastAPI (Python) · Java Spring |
 | Frontend | HTML · CSS · Vanilla JS |
 
 ---
 
-## Deployment Options
+## CI/CD Pipeline
 
-This project supports three deployment modes. Each has its own dedicated guide:
+Every push to `main` that touches `services/**` triggers the following pipeline:
+```
+git push
+  └── helm lint                        # validate chart before anything runs
+  └── detect changes (api / feedback)
+        └── docker build
+              └── trivy scan           # block on HIGH/CRITICAL CVEs
+                    └── push to ECR
+                          └── update values.yaml (git sha tag)
+                                └── ArgoCD sync → EKS
+                                      └── health check (rollout status)
+```
+
+**Quality gates:**
+
+| Gate | Tool | Blocks on |
+|---|---|---|
+| Pre-commit lint | Ruff · Prettier | Style, unused imports, formatting |
+| Secret scanning | Gitleaks | Leaked API keys or credentials |
+| Chart validation | Helm lint | Broken chart templates |
+| Vulnerability scan | Trivy | HIGH / CRITICAL CVEs in images |
+| GitOps deploy | ArgoCD | Auto-sync, self-heal, rollback on failure |
+
+---
+
+## Deployment Options
 
 | Mode | Description | Guide |
 |---|---|---|
@@ -66,7 +90,6 @@ This project supports three deployment modes. Each has its own dedicated guide:
 ## Quick Start (Local)
 
 **Prerequisites:** Docker, k3s, kubectl, helm
-
 ```bash
 git clone https://github.com/tuna6/RiddleBuddy.git
 cd RiddleBuddy
@@ -89,22 +112,23 @@ chmod +x deploy-local-full.sh
 - **AWS EKS** — production-grade cluster with ALB ingress, NAT gateway, private subnets
 - **Observability** — end-to-end with OpenTelemetry: metrics → AMP, logs → Loki, traces → Grafana
 - **IaC** — full AWS infrastructure defined in Terraform
-- **CI/CD** — GitHub Actions pipeline with Docker build, push.
-- **GitOps** - ArgoCD for auto sync & deploy, pod self heal.
-- **Security** — security groups, private subnet isolation, IRSA for pod-level AWS permissions
+- **CI/CD** — GitHub Actions pipeline with change detection, Docker build, Trivy security scan, ECR push
+- **GitOps** — ArgoCD for auto-sync, self-heal, and rollback on failed deploys
+- **Security** — Trivy image scanning, Gitleaks secret detection, pre-commit hooks, private subnet isolation, IRSA for pod-level AWS permissions
 
 ---
 
 ## Repository Structure
-
 ```
 RiddleBuddy/
-├── riddlebuddy-api/       # FastAPI service
-├── riddlebuddy-feedback/  # Java Spring service
+├── services/
+│   ├── api/               # FastAPI service
+│   └── feedback-service/  # Java Spring service
 ├── helm/                  # Helm charts
-├── argocd/                # Argocd config
+├── argocd/                # ArgoCD config
 ├── infra-cloud/           # Terraform (hybrid + full AWS)
 ├── .github/workflows/     # CI/CD pipelines
+├── .pre-commit-config.yaml
 └── docs/                  # Deployment guides & diagrams
 ```
 
